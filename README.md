@@ -1,4 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Faux Fetus Source Code
+
+This project is written in [React](https://reactjs.org).
 
 ## Available Scripts
 

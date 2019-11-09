@@ -1,6 +1,16 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+
+function App() {
+  return (
+    <h1>Faux Fetus</h1>
+  );
+}
+
+export default App;
+
+/**
+import logo from './logo.svg';
 
 function App() {
   return (
@@ -23,4 +33,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;**/
