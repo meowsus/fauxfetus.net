@@ -1,36 +1,27 @@
 import React from 'react';
+
 import './App.css';
 
-function App() {
-  return (
-    <h1>Faux Fetus</h1>
-  );
-}
-
-export default App;
-
-/**
-import logo from './logo.svg';
+import Header from './components/Header'
+import Sidebar from './components/Sidebar'
+import Page from './components/Page'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <div className='App-header'>
+        <Header />
+      </div>
+      <div className='App-body'>
+        <div className='App-sidebar'>
+          <Sidebar />
+        </div>
+        <div className='App-content'>
+          <Page />
+        </div>
+      </div>
     </div>
   );
 }
 
-export default App;**/
+export default App;
