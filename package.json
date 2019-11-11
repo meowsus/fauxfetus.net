@@ -17,7 +17,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "scrape": "node scripts/scrape_track_metadata.js",
-    "deploy": "react-scripts build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete --exclude='audio/'"
+    "deploy": "react-scripts build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete --exclude='audio/'",
     "deploy-audio": "react-scripts build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete"
   },
   "eslintConfig": {
