@@ -2,6 +2,8 @@
 
 This project is written in [React](https://reactjs.org).
 
+Check out the site at <https://fauxfetus.net>.
+
 ## Available Scripts
 
 In the project directory, you can run:
