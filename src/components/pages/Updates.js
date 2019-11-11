@@ -19,7 +19,7 @@ function Updates() {
         </li>
       </ol>
 
-      <form action="http://scripts.dreamhost.com/add_list.cgi" accept-charset="UTF-8" method="post" target="_blank">
+      <form action="http://scripts.dreamhost.com/add_list.cgi" acceptCharset="UTF-8" method="post" target="_blank">
         <input type="hidden" name="authenticity_token" />
         <input type="hidden" name="list" value="curt@fauxfetus.net" />
         <input type="hidden" name="domain" value="fauxfetus.net" />

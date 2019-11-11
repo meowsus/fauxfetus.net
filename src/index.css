@@ -10,28 +10,36 @@
 
   --spacing-unit: 10px;
   --double-spacing-unit: calc(var(--spacing-unit) * 2);
+  --triple-spacing-unit: calc(var(--spacing-unit) * 3);
 }
 
 /** GLOBAL */
 
 html {
   box-sizing: border-box;
-  background: var(--almost-white);
-  font-family: var(--primary-font);
   font-size: 18px;
-  color: var(--almost-black);
   line-height: 1.5;
+  font-family: var(--primary-font);
+  color: var(--almost-black);
 }
 
 *, *:before, *:after {
   box-sizing: inherit;
 }
 
+html, body {
+  height: 100%;
+  background: var(--blue-green);
+}
+
 /** TYPOGRAPHY */
 
 h1 {
   font-family: var(--secondary-font);
-  border-bottom: 1px solid var(--red);
+  border-bottom: 1px solid var(--yellow);
+  line-height: 1.15;
+  margin: var(--spacing-unit) 0;
+  font-size: 1.75rem;
 }
 
 a {
@@ -44,4 +52,11 @@ p, ul {
 
 li {
   margin-bottom: var(--double-spacing-unit);
+}
+
+/** HELPERS */
+
+.constrainer {
+  max-width: 1000px;
+  margin: 0 auto;
 }

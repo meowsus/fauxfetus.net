@@ -1,11 +1,26 @@
-.App {}
+.App {
+  background: var(--blue-green);
+}
 
 
-  .App-header {}
+  .App-header {
+    position: relative;
+    z-index: 20;
+  }
 
 
   .App-body {
+    position: relative;
+    z-index: 10;
     padding: var(--double-spacing-unit);
+    background: var(--almost-white);
+  }
+
+  @media screen and (min-width: 1000px) {
+    .App-body {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      padding: var(--double-spacing-unit) var(--triple-spacing-unit);
+    }
   }
 
 
@@ -13,3 +28,4 @@
 
 
     .App-content {}
+

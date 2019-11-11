@@ -3,26 +3,22 @@ import React from 'react';
 function Home() {
   return (
     <section>
-      <h1>Recent News</h1>
-
-      <h2>March 12th, 2018 - v0.3.0</h2>
-      <p>Artist and Member lists are now alphabetized for your convenience.</p>
-
-      <h2>February 13th, 2017 - v0.2.1</h2>
-      <p>I've cleaned up a few minor issues with this release:</p>
-      <ol>
-        <li>Albums are now sorted by track number, like they always should have been.</li>
-        <li>The Audio Players are a bit smarter than before. Now, when you switch between albums, both won't start playing at the same time... hopefully.</li>
-      </ol>
-
-      <h2>February 4th, 2017 - v0.2.0</h2>
-      <p>Faux Fetus veterans will remember <a href="/people/brian-reichert.html">Brian Reichert</a> and the love/hate relationship he has with his own music. True to form, Brian has asked that his solo albums be removed from the site.</p>
-      <p>In compliance with his wishes <strong>The Singing Idiot</strong>, <strong>Fun Tunnel</strong>, <strong>The Nervous System</strong> and <strong>Happybear Kaboom</strong> (with the exception of this split with Father Sleep) have been removed.</p>
-      <p>There's good news, though. All of his collaborative work is still online and he's releasing his next <a href="https://nyxynyx.bandcamp.com/" target="_blank" rel="noopener noreferrer">Nyxy Nyx</a> album as a Faux Fetus Exclusive.</p>
-
-      <h2>February 3rd, 2017 - v0.1.0</h2>
-      <p>The site is reborn with a new front-end. The artist offering is the same as it was when the site went down in 2010, save for the inclusion of <a href="/artists/the-riffingtons.html">The Riffingtons</a>.</p>
-      <p>The reception is well received.  We'll keep this up as long as we can.</p>
+      <h1>About Faux Fetus</h1>
+      <p>
+        On March 15th, 2004, a nineteen year old boy saved his first Apache httpd.conf file for the last time. His Compaq Presario was humming, tethered to a Comcast cable box run halfway across the house. The boy and his computer sat, waiting to serve their first user.
+      </p>
+      <p>
+        He created Faux Fetus to host the plethora of music made in his Philadelphian suburb. He was part of a community of creative, musical misfits on the outskirts of Chestnut Hill. The boy's goal was to give them all a place to call home. A place to share their music and a place find the music of others.
+      </p>
+      <p>
+        People promoted the site. Others found new music and contributed their own. The bubble grew. A few famous artists submitted their work which brought more and more traffic to the site. Comcast noticed that their hub that served Flourtown's Farmar Lane was struggling. The little Compaq had betrayed its owner's internet provider's service agreement.
+      </p>
+      <p>
+        So the boy trashed the faithful computer, learned Linux, and leased an expensive server node from a company in New Jersey. The bubble continued to grow. WFMU's Free Music Archive asked that Faux Fetus be a flagship contributor. The process was difficult and required much paperwork. Soon nothing was easy and everything hurt. Finally the bubble popped in August of 2010.
+      </p>
+      <p>
+        Over a decade later, through a suspension of catharsis, nepotism, and nostalgia, the boy is back and so is the site. For better or worse, here is Faux Fetus in it's semi-original glory... except as an endless, streaming radio station.
+      </p>
     </section>
   );
 }
