@@ -2,6 +2,7 @@
 
 # Project
 public/audio/
+src/tracks.json
 
 # dependencies
 /node_modules
