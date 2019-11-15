@@ -8,25 +8,6 @@ import pauseButton from '../images/pause.svg'
 import previousButton from '../images/previous.svg'
 import nextButton from '../images/next.svg'
 
-function getTrackIndex (direction, index, totalCount) {
-  if (direction === 'previous') {
-    return index === 0 ? totalCount - 1 : index - 1;
-  } else if (direction === 'next') {
-    return index === totalCount - 1 ? 0 : index + 1;
-  } else {
-    return index;
-  }
-}
-
-function getCurrentTrack (data, index) {
-  return {
-    file: process.env.PUBLIC_URL + data[index].file,
-    album: data[index].album,
-    title: data[index].title,
-    artist: data[index].artist
-  };
-}
-
 class AudioPlayer extends React.Component {
   constructor (props) {
     super(props);
@@ -35,19 +16,41 @@ class AudioPlayer extends React.Component {
       trackIndex: 0,
       isPlaying: false,
       trackData: this.props.trackData,
-      currentTrack: getCurrentTrack(this.props.trackData, 0),
+      currentTrack: this.getCurrentTrack(this.props.trackData, 0),
       playStatus: Sound.status.STOPPED
     };
   }
 
+  getTrackIndex (direction, index, totalCount) {
+    if (direction === 'previous') {
+      return index === 0 ? totalCount - 1 : index - 1;
+    } else if (direction === 'next') {
+      return index === totalCount - 1 ? 0 : index + 1;
+    } else {
+      return index;
+    }
+  }
+
+  getCurrentTrack (data, index) {
+    return {
+      file: process.env.PUBLIC_URL + data[index].file,
+      album: data[index].album,
+      title: data[index].title,
+      artist: data[index].artist
+    };
+  }
+
   changeTrack (direction) {
-    const trackIndex = getTrackIndex(
+    const trackIndex = this.getTrackIndex(
       direction,
       this.state.trackIndex,
       this.state.trackData.length
     );
 
-    const currentTrack = getCurrentTrack(this.state.trackData, trackIndex);
+    const currentTrack = this.getCurrentTrack(
+      this.state.trackData,
+      trackIndex
+    );
 
     this.setState({ trackIndex, currentTrack });
   }
