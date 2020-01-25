@@ -25,10 +25,15 @@
       text-shadow: 1px 1px var(--almost-black);
     }
 
+    .AudioPlayer-display span {
+      display: inline-block;
+      padding: 0 0.5em;
+    }
+
 
     .AudioPlayer-control {}
 
-      .AudioPlayer-control img {
+      .AudioPlayer-control [type=image] {
         transition: opacity 0.2s ease;
         display: block;
         width: 32px;
@@ -37,6 +42,6 @@
         cursor: pointer;
       }
 
-      .AudioPlayer-control img:hover {
+      .AudioPlayer-control [type=image]:hover {
         opacity: 1;
       }
