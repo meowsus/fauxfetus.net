@@ -84,6 +84,7 @@ class Radio extends React.Component {
           <div className="Radio-ui">
             <div className="Radio-control">
               <input
+                className="Radio-button Radio-button--play"
                 type="image"
                 src={isPlaying ? pauseButton : playButton}
                 alt={isPlaying ? 'Pause Track' : 'Play Track'}
@@ -99,6 +100,7 @@ class Radio extends React.Component {
             </div>
             <div className="Radio-control">
               <input
+                className="Radio-button Radio-button--previous"
                 type="image"
                 src={previousButton}
                 alt="Previous Track"
@@ -107,6 +109,7 @@ class Radio extends React.Component {
             </div>
             <div className="Radio-control">
               <input
+                className="Radio-button Radio-button--next"
                 type="image"
                 src={nextButton}
                 alt="Next Track"
@@ -127,7 +130,7 @@ class Radio extends React.Component {
 }
 
 Radio.propTypes = {
-  tracks: PropTypes.isRequired,
+  tracks: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Radio;
