@@ -2,60 +2,69 @@ import React from 'react';
 import Sound from 'react-sound';
 import PropTypes from 'prop-types';
 
-import '../assets/styles/AudioPlayer.css';
+import '../assets/styles/Radio.css';
 
 import playButton from '../assets/images/play.svg';
 import pauseButton from '../assets/images/pause.svg';
 import previousButton from '../assets/images/previous.svg';
 import nextButton from '../assets/images/next.svg';
 
-function getTrackIndex(direction, index, totalCount) {
-  if (direction === 'previous') {
-    return index === 0 ? totalCount - 1 : index - 1;
-  }
-
-  if (direction === 'next') {
-    return index === totalCount - 1 ? 0 : index + 1;
-  }
-
-  return index;
-}
-
-function getCurrentTrack(data, index) {
-  return {
-    file: process.env.PUBLIC_URL + data[index].file,
-    album: data[index].album,
-    title: data[index].title,
-    artist: data[index].artist,
-  };
-}
-
-class AudioPlayer extends React.Component {
+class Radio extends React.Component {
   constructor(props) {
     super(props);
 
-    const { trackData } = this.props;
-
     this.state = {
-      trackData,
-      trackIndex: 0,
       isPlaying: false,
-      currentTrack: getCurrentTrack(trackData, 0),
+      currentTrack: this.getTrack(0),
       playStatus: Sound.status.STOPPED,
     };
   }
 
+  getTrackIndex(direction) {
+    const { tracks } = this.props;
+    const { currentTrack } = this.state;
+
+    if (direction === 'previous') {
+      return currentTrack.index === 0
+        ? tracks.length - 1
+        : currentTrack.index - 1;
+    }
+
+    if (direction === 'next') {
+      return currentTrack.index === tracks.length - 1
+        ? 0
+        : currentTrack.index + 1;
+    }
+
+    return currentTrack.index;
+  }
+
+  getTrack(index) {
+    const { tracks } = this.props;
+
+    const {
+      file,
+      album,
+      title,
+      artist,
+    } = tracks[index];
+
+    const fileUrl = process.env.PUBLIC_URL + file;
+
+    return {
+      fileUrl,
+      album,
+      title,
+      artist,
+      index,
+    };
+  }
+
   changeTrack(direction) {
-    this.setState((state) => {
-      const trackIndex = getTrackIndex(
-        direction,
-        state.trackIndex,
-        state.trackData.length,
-      );
+    const nextTrackIndex = this.getTrackIndex(direction);
 
-      const currentTrack = getCurrentTrack(state.trackData, trackIndex);
-
-      return { trackIndex, currentTrack };
+    this.setState({
+      currentTrack: this.getTrack(nextTrackIndex),
     });
   }
 
@@ -70,10 +79,10 @@ class AudioPlayer extends React.Component {
     const { isPlaying, currentTrack, playStatus } = this.state;
 
     return (
-      <div className="AudioPlayer">
+      <div className="Radio">
         <div className="constrainer">
-          <div className="AudioPlayer-ui">
-            <div className="AudioPlayer-control">
+          <div className="Radio-ui">
+            <div className="Radio-control">
               <input
                 type="image"
                 src={isPlaying ? pauseButton : playButton}
@@ -81,14 +90,14 @@ class AudioPlayer extends React.Component {
                 onClick={() => this.playOrPauseTrack()}
               />
             </div>
-            <div className="AudioPlayer-display">
+            <div className="Radio-display">
               <strong>{currentTrack.title}</strong>
               <span>by</span>
               <em>{currentTrack.artist}</em>
               <span>from</span>
               {`"${currentTrack.album}"`}
             </div>
-            <div className="AudioPlayer-control">
+            <div className="Radio-control">
               <input
                 type="image"
                 src={previousButton}
@@ -96,7 +105,7 @@ class AudioPlayer extends React.Component {
                 onClick={() => this.changeTrack('previous')}
               />
             </div>
-            <div className="AudioPlayer-control">
+            <div className="Radio-control">
               <input
                 type="image"
                 src={nextButton}
@@ -108,7 +117,7 @@ class AudioPlayer extends React.Component {
         </div>
 
         <Sound
-          url={currentTrack.file}
+          url={currentTrack.fileUrl}
           playStatus={playStatus}
           onFinishedPlaying={() => this.changeTrack('next')}
         />
@@ -117,8 +126,8 @@ class AudioPlayer extends React.Component {
   }
 }
 
-AudioPlayer.propTypes = {
-  trackData: PropTypes.isRequired,
+Radio.propTypes = {
+  tracks: PropTypes.isRequired,
 };
 
-export default AudioPlayer;
+export default Radio;

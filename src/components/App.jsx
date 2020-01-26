@@ -4,17 +4,17 @@ import shuffle from 'lodash.shuffle';
 import '../assets/styles/App.css';
 
 import Header from './Header';
-import AudioPlayer from './AudioPlayer';
+import Radio from './Radio';
 import Page from './Page';
 
-import trackData from '../tracks.json';
+import tracks from '../tracks.json';
 
 function App() {
   return (
     <div className="App">
       <div className="App-header">
         <Header />
-        <AudioPlayer trackData={shuffle(trackData)} />
+        <Radio tracks={shuffle(tracks)} />
       </div>
       <div className="constrainer">
         <div className="App-body">

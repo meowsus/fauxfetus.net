@@ -1,23 +1,23 @@
-.AudioPlayer {
+.Radio {
   background: var(--red);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 
-  .AudioPlayer-ui {
+  .Radio-ui {
     display: flex;
     align-items: center;
     padding: var(--spacing-unit);
   }
 
   @media screen and (min-width: 1000px) {
-    .AudioPlayer-ui {
+    .Radio-ui {
       padding: var(--spacing-unit) 0;
     }
   }
 
 
-    .AudioPlayer-display {
+    .Radio-display {
       flex-grow: 2;
       text-align: center;
       padding: 0 var(--spacing-unit);
@@ -25,15 +25,15 @@
       text-shadow: 1px 1px var(--almost-black);
     }
 
-    .AudioPlayer-display span {
+    .Radio-display span {
       display: inline-block;
       padding: 0 0.5em;
     }
 
 
-    .AudioPlayer-control {}
+    .Radio-control {}
 
-      .AudioPlayer-control [type=image] {
+      .Radio-control [type=image] {
         transition: opacity 0.2s ease;
         display: block;
         width: 32px;
@@ -42,6 +42,6 @@
         cursor: pointer;
       }
 
-      .AudioPlayer-control [type=image]:hover {
+      .Radio-control [type=image]:hover {
         opacity: 1;
       }
