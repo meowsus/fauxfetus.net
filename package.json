@@ -28,6 +28,7 @@
     "scrape": "node scripts/scrape_track_metadata.js",
     "deploy": "yarn build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete --exclude='audio/'",
     "deploy-audio": "yarn scrape && yarn build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete",
+    "download-audio": "rsync -avzh meowsus@fauxfetus.net:fauxfetus.net/audio/ ./public/audio/ --delete",
     "lint": "yarn eslint src/**/*.js"
   },
   "eslintConfig": {
