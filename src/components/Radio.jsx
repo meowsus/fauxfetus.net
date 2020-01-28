@@ -1,6 +1,7 @@
 import React from 'react';
 import Sound from 'react-sound';
-import PropTypes from 'prop-types';
+
+import shuffle from 'lodash.shuffle';
 
 import '../assets/styles/Radio.css';
 
@@ -14,15 +15,30 @@ class Radio extends React.Component {
     super(props);
 
     this.state = {
+      tracks: null,
+      currentTrack: null,
       isPlaying: false,
-      currentTrack: this.getTrack(0),
       playStatus: Sound.status.STOPPED,
     };
   }
 
+  componentDidMount() {
+    fetch(`${process.env.PUBLIC_URL}/data/tracks.json`)
+      .then((response) => response.json())
+      .then((tracks) => this.setState({ tracks: shuffle(tracks) }))
+      .then(() => {
+        this.setState({
+          currentTrack: this.getTrack(0),
+        });
+      });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.currentTrack !== null;
+  }
+
   getTrackIndex(direction) {
-    const { tracks } = this.props;
-    const { currentTrack } = this.state;
+    const { tracks, currentTrack } = this.state;
 
     if (direction === 'previous') {
       return currentTrack.index === 0
@@ -40,7 +56,7 @@ class Radio extends React.Component {
   }
 
   getTrack(index) {
-    const { tracks } = this.props;
+    const { tracks } = this.state;
 
     const {
       file,
@@ -91,13 +107,25 @@ class Radio extends React.Component {
                 onClick={() => this.playOrPauseTrack()}
               />
             </div>
-            <div className="Radio-display">
-              <strong>{currentTrack.title}</strong>
-              <span>by</span>
-              <em>{currentTrack.artist}</em>
-              <span>from</span>
-              {`"${currentTrack.album}"`}
-            </div>
+            { currentTrack === null ? (
+              <div className="Radio-display Radio-display--loading">
+                Loading...
+              </div>
+            ) : (
+              <div className="Radio-display">
+                <strong>{currentTrack.title}</strong>
+                <span>by</span>
+                <em>{currentTrack.artist}</em>
+                <span>from</span>
+                {`"${currentTrack.album}"`}
+
+                <Sound
+                  url={currentTrack.fileUrl}
+                  playStatus={playStatus}
+                  onFinishedPlaying={() => this.changeTrack('next')}
+                />
+              </div>
+            )}
             <div className="Radio-control">
               <input
                 className="Radio-button Radio-button--previous"
@@ -118,19 +146,9 @@ class Radio extends React.Component {
             </div>
           </div>
         </div>
-
-        <Sound
-          url={currentTrack.fileUrl}
-          playStatus={playStatus}
-          onFinishedPlaying={() => this.changeTrack('next')}
-        />
       </div>
     );
   }
 }
-
-Radio.propTypes = {
-  tracks: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
 
 export default Radio;

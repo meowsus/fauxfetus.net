@@ -2,7 +2,7 @@ import React from 'react';
 import Sound from 'react-sound';
 import { shallow } from 'enzyme';
 
-import tracks from '../../tracks.json';
+import tracks from '../../../public/data/tracks.json';
 
 import Radio from '../Radio';
 
@@ -10,7 +10,7 @@ import play from '../../assets/images/play.svg';
 import pause from '../../assets/images/pause.svg';
 
 it('renders without crashing', () => {
-  const wrapper = shallow(<Radio tracks={tracks} />);
+  const wrapper = shallow(<Radio />);
   const { currentTrack } = wrapper.state();
 
   expect(wrapper.contains(currentTrack.title)).toEqual(true);
@@ -19,7 +19,7 @@ it('renders without crashing', () => {
 });
 
 it('formats currentTrack', () => {
-  const wrapper = shallow(<Radio tracks={tracks} />);
+  const wrapper = shallow(<Radio />);
 
   const firstTrack = tracks[0];
   const { currentTrack } = wrapper.state();
@@ -34,7 +34,7 @@ it('formats currentTrack', () => {
 
 it('plays and pauses the current track', () => {
   const { STOPPED, PLAYING, PAUSED } = Sound.status;
-  const wrapper = shallow(<Radio tracks={tracks} />);
+  const wrapper = shallow(<Radio />);
 
   expect(wrapper.state().isPlaying).toEqual(false);
   expect(wrapper.state().playStatus).toEqual(STOPPED);
@@ -60,7 +60,7 @@ it('plays and pauses the current track', () => {
 });
 
 it('cycles tracks', () => {
-  const wrapper = shallow(<Radio tracks={tracks} />);
+  const wrapper = shallow(<Radio />);
   const { currentTrack } = wrapper.state();
 
   wrapper.find('.Radio-button--previous').simulate('click');

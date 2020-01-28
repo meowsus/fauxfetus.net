@@ -25,6 +25,10 @@
       text-shadow: 1px 1px var(--almost-black);
     }
 
+    .Radio-display--loading {
+      text-decoration: uppercase;
+    }
+
     .Radio-display span {
       display: inline-block;
       padding: 0 0.5em;
