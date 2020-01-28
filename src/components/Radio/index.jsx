@@ -3,20 +3,22 @@ import Sound from 'react-sound';
 
 import shuffle from 'lodash.shuffle';
 
-import '../assets/styles/Radio.css';
+import '../../assets/styles/Radio.css';
 
-import playButton from '../assets/images/play.svg';
-import pauseButton from '../assets/images/pause.svg';
-import previousButton from '../assets/images/previous.svg';
-import nextButton from '../assets/images/next.svg';
+import RadioButton from './RadioButton';
 
 class Radio extends React.Component {
   constructor(props) {
     super(props);
 
+    this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
+    this.handlePreviousButtonClick = this.handlePreviousButtonClick.bind(this);
+    this.handleNextButtonClick = this.handleNextButtonClick.bind(this);
+
     this.state = {
       tracks: null,
       currentTrack: null,
+      isLoading: true,
       isPlaying: false,
       playStatus: Sound.status.STOPPED,
     };
@@ -28,13 +30,14 @@ class Radio extends React.Component {
       .then((tracks) => this.setState({ tracks: shuffle(tracks) }))
       .then(() => {
         this.setState({
+          isLoading: false,
           currentTrack: this.getTrack(0),
         });
       });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.currentTrack !== null;
+    return !nextState.isLoading;
   }
 
   getTrackIndex(direction) {
@@ -76,15 +79,42 @@ class Radio extends React.Component {
     };
   }
 
-  changeTrack(direction) {
-    const nextTrackIndex = this.getTrackIndex(direction);
+  handlePreviousButtonClick(event) {
+    const { isLoading } = this.state;
 
-    this.setState({
-      currentTrack: this.getTrack(nextTrackIndex),
-    });
+    const trackIndex = this.getTrackIndex('previous');
+    const currentTrack = this.getTrack(trackIndex);
+
+    if (isLoading) {
+      event.preventDefault();
+      return;
+    }
+
+    this.setState({ currentTrack });
   }
 
-  playOrPauseTrack() {
+  handleNextButtonClick(event) {
+    const { isLoading } = this.state;
+
+    const trackIndex = this.getTrackIndex('next');
+    const currentTrack = this.getTrack(trackIndex);
+
+    if (isLoading) {
+      event.preventDefault();
+      return;
+    }
+
+    this.setState({ currentTrack });
+  }
+
+  handlePlayButtonClick(event) {
+    const { isLoading } = this.state;
+
+    if (isLoading) {
+      event.preventDefault();
+      return;
+    }
+
     this.setState((state) => ({
       isPlaying: !state.isPlaying,
       playStatus: !state.isPlaying ? Sound.status.PLAYING : Sound.status.PAUSED,
@@ -92,22 +122,25 @@ class Radio extends React.Component {
   }
 
   render() {
-    const { isPlaying, currentTrack, playStatus } = this.state;
+    const {
+      isPlaying,
+      isLoading,
+      playStatus,
+      currentTrack,
+    } = this.state;
 
     return (
       <div className="Radio">
         <div className="constrainer">
           <div className="Radio-ui">
             <div className="Radio-control">
-              <input
-                className="Radio-button Radio-button--play"
-                type="image"
-                src={isPlaying ? pauseButton : playButton}
-                alt={isPlaying ? 'Pause Track' : 'Play Track'}
-                onClick={() => this.playOrPauseTrack()}
+              <RadioButton
+                type="play"
+                isPlaying={isPlaying}
+                onClick={this.handlePlayButtonClick}
               />
             </div>
-            { currentTrack === null ? (
+            { isLoading ? (
               <div className="Radio-display Radio-display--loading">
                 Loading...
               </div>
@@ -127,21 +160,17 @@ class Radio extends React.Component {
               </div>
             )}
             <div className="Radio-control">
-              <input
-                className="Radio-button Radio-button--previous"
-                type="image"
-                src={previousButton}
-                alt="Previous Track"
-                onClick={() => this.changeTrack('previous')}
+              <RadioButton
+                type="previous"
+                isPlaying={isPlaying}
+                onClick={this.handlePreviousButtonClick}
               />
             </div>
             <div className="Radio-control">
-              <input
-                className="Radio-button Radio-button--next"
-                type="image"
-                src={nextButton}
-                alt="Next Track"
-                onClick={() => this.changeTrack('next')}
+              <RadioButton
+                type="next"
+                isPlaying={isPlaying}
+                onClick={this.handleNextButtonClick}
               />
             </div>
           </div>
