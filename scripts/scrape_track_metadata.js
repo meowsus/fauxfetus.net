@@ -74,6 +74,7 @@ class ID3Scraper {
     this.saveFiles = {
       catalog: './public/data/catalog.json',
       tracks: './public/data/tracks.json',
+      artists: './public/data/artists.json',
     };
   }
 
@@ -177,6 +178,21 @@ class ID3Scraper {
     fs.writeFileSync(this.saveFiles.tracks, JSON.stringify(data));
   }
 
+  saveArtistsFile() {
+    const data = (
+      Object.entries(this.data).reduce((group, [slug, artist]) => {
+        group.push({
+          slug,
+          name: artist.name,
+        });
+
+        return group;
+      }, [])
+    );
+
+    fs.writeFileSync(this.saveFiles.artists, JSON.stringify(data));
+  }
+
   perform() {
     this.getMetadata().then((data) => {
       data.forEach((metadata) => {
@@ -187,6 +203,7 @@ class ID3Scraper {
 
       this.saveCatalogFile();
       this.saveTracksFile();
+      this.saveArtistsFile();
     });
   }
 }
