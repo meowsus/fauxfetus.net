@@ -72,9 +72,7 @@ class ID3Scraper {
     this.data = {};
 
     this.saveFiles = {
-      catalog: './public/data/catalog.json',
-      tracks: './public/data/tracks.json',
-      artists: './public/data/artists.json',
+      catalog: './public/catalog.json',
     };
   }
 
@@ -153,46 +151,6 @@ class ID3Scraper {
     fs.writeFileSync(this.saveFiles.catalog, JSON.stringify(this.data));
   }
 
-  saveTracksFile() {
-    const data = (
-      Object.values(this.data).flatMap((artist) => (
-        Object.values(artist.albums).flatMap((album) => (
-          album.tracks.map((tracks) => ({
-            ...tracks,
-            artist: artist.name,
-            album: album.name,
-          }))
-        ))
-      )).reduce((group, track) => {
-        group.push({
-          title: track.title,
-          artist: track.artist,
-          album: track.album,
-          file: track.file,
-        });
-
-        return group;
-      }, [])
-    );
-
-    fs.writeFileSync(this.saveFiles.tracks, JSON.stringify(data));
-  }
-
-  saveArtistsFile() {
-    const data = (
-      Object.entries(this.data).reduce((group, [slug, artist]) => {
-        group.push({
-          slug,
-          name: artist.name,
-        });
-
-        return group;
-      }, [])
-    );
-
-    fs.writeFileSync(this.saveFiles.artists, JSON.stringify(data));
-  }
-
   perform() {
     this.getMetadata().then((data) => {
       data.forEach((metadata) => {
@@ -202,8 +160,6 @@ class ID3Scraper {
       });
 
       this.saveCatalogFile();
-      this.saveTracksFile();
-      this.saveArtistsFile();
     });
   }
 }

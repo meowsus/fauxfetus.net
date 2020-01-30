@@ -10,12 +10,6 @@
     padding: var(--spacing-unit);
   }
 
-  @media screen and (min-width: 1000px) {
-    .Radio-ui {
-      padding: var(--spacing-unit) 0;
-    }
-  }
-
 
     .Radio-display {
       flex-grow: 2;

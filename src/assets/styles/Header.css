@@ -1,17 +1,47 @@
 .Header {
   background: var(--almost-black);
-  padding: var(--double-spacing-unit);
+  padding: var(--spacing-unit);
   font-family: var(--secondary-font);
 }
 
   .Header a {
     transition: color 0.3s ease;
     text-decoration: none;
-    color: var(--yellow);
   }
 
   .Header a:hover {
     color: var(--blue-green);
+  }
+
+  .Header-button {
+    position: relative;
+    top: 5px;
+    display: inline-block;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+
+  .Header-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .Header-icon path {
+    transition: fill 0.3s ease;
+    fill: var(--almost-white);
+  }
+
+  .Header-icon:hover path {
+    fill: var(--blue-green);
+  }
+
+
+  .Header-menu {
+    width: 15%;
+    float: left;
   }
 
 
@@ -19,36 +49,27 @@
     display: block;
     text-transform: uppercase;
     text-align: center;
-    color: var(--yellow);
+    color: var(--almost-white);
     font-size: 2.5rem;
     line-height: 1;
+    letter-spacing: -1px;
+    width: 70%;
+    float: left;
   }
 
 
-  .Header-menu {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-weight: bold;
+  .Header-contact {
+    width: 15%;
+    float: left;
+    text-align: right;
   }
 
-  @media screen and (min-width: 1000px) {
-    .Header-menu {
-      font-size: 0;
-    }
-  }
-
-    .Header-menu li {
-      text-align: center;
-      margin-bottom: 0;
+    .Header-contact .Header-button {
+      top: 10px;
     }
 
-    @media screen and (min-width: 1000px) {
-      .Header-menu li {
-        display: inline-block;
-        font-size: 1rem;
-        width: 33.333%;
-      }
+    .Header-contact .Header-icon {
+      height: 25px;
+      width: 25px;
     }
-
 
