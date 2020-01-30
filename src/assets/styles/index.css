@@ -1,9 +1,10 @@
 :root {
   --almost-black: #011627;
-  --almost-white: #FDFFFC;
-  --blue-green: #2EC4B6;
-  --red: #E71D36;
-  --yellow: #FF9F1C;
+  --almost-white: #fdfffc;
+  --blue-green: #2ec4b6;
+  --red: #e71d36;
+  --yellow: #ff9f1c;
+  --gray: #c2c5cc;
 
   --primary-font: 'IBM Plex Sans', sans-serif;
   --secondary-font: 'Bungee Hairline', cursive;
@@ -11,6 +12,8 @@
   --spacing-unit: 10px;
   --double-spacing-unit: calc(var(--spacing-unit) * 2);
   --triple-spacing-unit: calc(var(--spacing-unit) * 3);
+
+  --header-height: 65px;
 }
 
 /** GLOBAL */
@@ -29,7 +32,7 @@ html {
 
 html, body {
   height: 100%;
-  background: var(--blue-green);
+  background: var(--almost-black);
 }
 
 /** TYPOGRAPHY */

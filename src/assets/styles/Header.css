@@ -1,7 +1,18 @@
 .Header {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-height: var(--header-height);
   background: var(--almost-black);
   padding: var(--spacing-unit);
   font-family: var(--secondary-font);
+}
+
+.Header--loading {
+  bottom: 0;
+  max-height: 100vh;
 }
 
   .Header a {

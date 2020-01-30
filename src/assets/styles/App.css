@@ -1,15 +1,17 @@
 .App {
-  background: var(--blue-green);
+  position: relative;
 }
 
 
-  .App-header {
+  .App-body {
     position: relative;
-    z-index: 20;
+    z-index: 10;
+    top: var(--header-height);
+    background: var(--gray);
   }
 
 
-  .App-body {
+  .App-content {
     position: relative;
     z-index: 10;
     padding: var(--double-spacing-unit);
@@ -17,15 +19,8 @@
   }
 
   @media screen and (min-width: 1000px) {
-    .App-body {
+    .App-content {
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
       padding: var(--double-spacing-unit) var(--triple-spacing-unit);
     }
   }
-
-
-    .App-sidebar {}
-
-
-    .App-content {}
-

@@ -15,7 +15,7 @@ class App extends React.Component {
 
     this.state = {
       catalog: {},
-      loadingCatalog: true,
+      isLoading: true,
     };
   }
 
@@ -23,35 +23,32 @@ class App extends React.Component {
     fetch(`${process.env.PUBLIC_URL}/catalog.json`)
       .then((response) => response.json())
       .then((catalog) => this.setState({ catalog }))
-      .then(() => this.setState({ loadingCatalog: false }));
+      .then(() => this.setState({ isLoading: false }));
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !nextState.loadingCatalog;
+    return !nextState.isLoading;
   }
 
   render() {
-    const { catalog, loadingCatalog } = this.state;
+    const { catalog, isLoading } = this.state;
 
     return (
       <BrowserRouter>
-        { loadingCatalog ? (
-          <span>Loading...</span>
-        ) : (
-          <div className="App">
-            <div className="App-header">
-              <Header />
+        <div className="App">
+          <Header isLoading={isLoading} />
+
+          {!isLoading && (
+            <div className="App-body">
               <Radio tracks={getTracks(catalog)} />
-            </div>
-            <div className="constrainer">
-              <div className="App-body">
+              <div className="constrainer">
                 <div className="App-content">
                   <Page />
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </BrowserRouter>
     );
   }
