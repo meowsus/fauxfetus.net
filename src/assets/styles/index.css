@@ -10,6 +10,7 @@
   --secondary-font: 'Bungee Hairline', cursive;
 
   --spacing-unit: 10px;
+  --half-spacing-unit: calc(var(--spacing-unit) / 2);
   --double-spacing-unit: calc(var(--spacing-unit) * 2);
   --triple-spacing-unit: calc(var(--spacing-unit) * 3);
 

@@ -4,56 +4,72 @@ import PropTypes from 'prop-types';
 
 import '../assets/styles/Header.css';
 
-import { ReactComponent as MenuIcon } from '../assets/images/menu.svg';
-import { ReactComponent as ContactIcon } from '../assets/images/contact.svg';
+import HeaderMenu from './HeaderMenu';
+import HeaderButton from './HeaderButton';
 
 function Header(props) {
-  const { isLoading } = props;
+  const { artists } = props;
+
+  const openMenu = (header) => {
+    const menuButton = header.querySelector('.HeaderButton--menu');
+
+    header.classList.add('Header--full');
+    menuButton.classList.add('HeaderButton--active');
+  };
+
+  const closeMenu = (header) => {
+    const menuButton = header.querySelector('.HeaderButton--menu');
+
+    header.classList.remove('Header--full');
+    menuButton.classList.remove('HeaderButton--active');
+  };
+
+  const onHeaderButtonClick = (event) => {
+    const header = event.target.closest('.Header');
+    const menuIsActive = header.classList.contains('Header--full');
+
+    if (menuIsActive) {
+      closeMenu(header);
+    } else {
+      openMenu(header);
+    }
+  };
+
+  const onHeaderMenuLinkClick = (event) => {
+    const header = event.target.closest('.Header');
+    closeMenu(header);
+  };
+
+  const onContactButtonClick = (event) => {};
 
   return (
-    <div className={isLoading ? 'Header Header--loading' : 'Header'}>
-      <div className="constrainer clearfix">
-        <div className="Header-menu">
-          {!isLoading && (
-            <button
-              className="Header-button"
-              type="button"
-            >
-              <MenuIcon
-                className="Header-icon"
-                title="Main Menu Icon"
-              />
-            </button>
-          )}
+    <div className="Header">
+      <div className="Header-row [ constrainer clearfix ]">
+        <div className="Header-left">
+          <HeaderButton type="menu" onClick={onHeaderButtonClick} />
         </div>
 
-        <Link
-          to="/"
-          className="Header-logo"
-        >
-          FauxFetus
-        </Link>
+        <div className="Header-center">
+          <Link
+            to="/"
+            className="Header-logo"
+          >
+            FauxFetus
+          </Link>
+        </div>
 
-        <div className="Header-contact">
-          {!isLoading && (
-            <button
-              className="Header-button"
-              type="button"
-            >
-              <ContactIcon
-                className="Header-icon"
-                title="Main Menu Icon"
-              />
-            </button>
-          )}
+        <div className="Header-right">
+          <HeaderButton type="contact" onClick={onContactButtonClick} />
         </div>
       </div>
+
+      <HeaderMenu artists={artists} onLinkClick={onHeaderMenuLinkClick} />
     </div>
   );
 }
 
 Header.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
+  artists: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Header;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { getTracks } from '../reducers';
+import { getTracks, getArtists } from '../reducers';
 
 import '../assets/styles/App.css';
 
@@ -35,20 +35,20 @@ class App extends React.Component {
 
     return (
       <BrowserRouter>
-        <div className="App">
-          <Header isLoading={isLoading} />
+        {!isLoading && (
+          <div className="App">
+            <Header artists={getArtists(catalog)} />
 
-          {!isLoading && (
             <div className="App-body">
               <Radio tracks={getTracks(catalog)} />
               <div className="constrainer">
                 <div className="App-content">
-                  <Page />
+                  <Page catalog={catalog} />
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </BrowserRouter>
     );
   }

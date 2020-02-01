@@ -1,0 +1,22 @@
+.HeaderMenu {
+  color: var(--almost-white);
+  text-align: center;
+  margin: 0 auto;
+  padding: 0 var(--double-spacing-unit) var(--double-spacing-unit);
+  list-style: none;
+}
+
+  .HeaderMenu-item {
+    display: inline-block;
+    margin: 0;
+    padding: var(--half-spacing-unit) var(--spacing-unit);
+    font-weight: bold;
+  }
+
+    .HeaderMenu-item a:hover {
+      color: var(--red);
+    }
+
+    .HeaderMenu-first-char {
+      color: var(--red);
+    }

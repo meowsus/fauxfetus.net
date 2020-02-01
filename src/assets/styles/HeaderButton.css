@@ -1,0 +1,40 @@
+.HeaderButton {
+  position: relative;
+  top: 5px;
+  display: inline-block;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+}
+
+.HeaderButton--active {}
+
+
+  .HeaderButton-icon {
+    width: 100%;
+    height: 100%;
+  }
+
+  .HeaderButton-icon {
+    transition: fill 0.3s ease;
+    fill: var(--almost-white);
+  }
+
+  .HeaderButton-icon:hover {
+    fill: var(--blue-green);
+  }
+
+  .HeaderButton--active .HeaderButton-icon {
+    fill: var(--red);
+  }
+
+
+  .HeaderButton--contact {
+    top: 10px;
+    height: 25px;
+    width: 25px;
+  }
+

@@ -21,4 +21,19 @@ export function getTracks(data) {
   );
 }
 
-export function getArtists() {}
+export function getArtists(data) {
+  return (
+    Object.entries(data)
+      .reduce((group, [slug, artist]) => {
+        group.push({
+          slug,
+          name: artist.name,
+        });
+
+        return group;
+      }, [])
+      .sort((a, b) => (
+        (a.slug < b.slug) ? -1 : 1
+      ))
+  );
+}

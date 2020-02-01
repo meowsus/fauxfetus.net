@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import shuffle from 'lodash.shuffle';
 
-import '../../assets/styles/Radio.css';
+import '../assets/styles/Radio.css';
 
 import RadioButton from './RadioButton';
 
@@ -95,13 +95,11 @@ class Radio extends React.Component {
     return (
       <div className="Radio">
         <div className="Radio-ui">
-          <div className="Radio-control">
-            <RadioButton
-              type="play"
-              isPlaying={isPlaying}
-              onClick={this.handlePlayButtonClick}
-            />
-          </div>
+          <RadioButton
+            type="play"
+            isPlaying={isPlaying}
+            onClick={this.handlePlayButtonClick}
+          />
           <div className="Radio-display">
             <strong>{currentTrack.title}</strong>
             <span>by</span>
@@ -109,20 +107,16 @@ class Radio extends React.Component {
             <span>from</span>
             {`"${currentTrack.album}"`}
           </div>
-          <div className="Radio-control">
-            <RadioButton
-              type="previous"
-              isPlaying={isPlaying}
-              onClick={this.handlePreviousButtonClick}
-            />
-          </div>
-          <div className="Radio-control">
-            <RadioButton
-              type="next"
-              isPlaying={isPlaying}
-              onClick={this.handleNextButtonClick}
-            />
-          </div>
+          <RadioButton
+            type="previous"
+            isPlaying={isPlaying}
+            onClick={this.handlePreviousButtonClick}
+          />
+          <RadioButton
+            type="next"
+            isPlaying={isPlaying}
+            onClick={this.handleNextButtonClick}
+          />
         </div>
 
         <Sound

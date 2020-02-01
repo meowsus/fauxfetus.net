@@ -4,18 +4,20 @@
   top: 0;
   left: 0;
   right: 0;
-  max-height: var(--header-height);
+  height: var(--header-height);
   background: var(--almost-black);
-  padding: var(--spacing-unit);
   font-family: var(--secondary-font);
+  transition: height 0.5s ease-out;
+  overflow: hidden;
 }
 
-.Header--loading {
-  bottom: 0;
-  max-height: 100vh;
+.Header--full {
+  height: 100%;
+  overflow-y: auto;
 }
 
   .Header a {
+    color: var(--almost-white);
     transition: color 0.3s ease;
     text-decoration: none;
   }
@@ -24,63 +26,41 @@
     color: var(--blue-green);
   }
 
-  .Header-button {
-    position: relative;
-    top: 5px;
-    display: inline-block;
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-  }
 
+.Header-row {
+  padding: var(--spacing-unit);
+}
 
-  .Header-icon {
-    width: 35px;
-    height: 35px;
-  }
-
-  .Header-icon path {
-    transition: fill 0.3s ease;
-    fill: var(--almost-white);
-  }
-
-  .Header-icon:hover path {
-    fill: var(--blue-green);
-  }
-
-
-  .Header-menu {
+  .Header-left {
     width: 15%;
     float: left;
   }
 
-
-  .Header-logo {
-    display: block;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--almost-white);
-    font-size: 2.5rem;
-    line-height: 1;
-    letter-spacing: -1px;
+  .Header-center {
     width: 70%;
     float: left;
   }
 
-
-  .Header-contact {
+  .Header-right {
     width: 15%;
     float: left;
     text-align: right;
   }
 
-    .Header-contact .Header-button {
-      top: 10px;
-    }
 
-    .Header-contact .Header-icon {
-      height: 25px;
-      width: 25px;
-    }
+.Header-logo {
+  display: block;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--almost-white);
+  font-size: 1.75rem;
+  line-height: calc(var(--header-height) - var(--double-spacing-unit));
+  letter-spacing: -1px;
+}
 
+@media (min-width: 1000px) {
+  .Header-logo {
+    font-size: 2.5rem;
+  }
+}

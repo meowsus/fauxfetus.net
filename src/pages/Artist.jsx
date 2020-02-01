@@ -1,37 +1,21 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import '../assets/styles/Page.css';
-
-import Home from '../pages/Home';
-import About from '../pages/About';
-import Artist from '../pages/Artist';
-import Updates from '../pages/Updates';
-import Contributions from '../pages/Contributions';
-
-function Page(props) {
+function Artist(props) {
   const { catalog } = props;
+  const { slug } = useParams();
+
+  const artist = catalog[slug];
 
   return (
-    <div className="Page">
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/updates" component={Updates} />
-        <Route path="/contributions" component={Contributions} />
-
-        <Route
-          path="/artist/:slug"
-          render={() => <Artist catalog={catalog} />}
-        />
-
-      </Switch>
+    <div className="Artist">
+      <h1>{artist.name}</h1>
     </div>
   );
 }
 
-Page.propTypes = {
+Artist.propTypes = {
   catalog: PropTypes.objectOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -58,5 +42,4 @@ Page.propTypes = {
   ).isRequired,
 };
 
-
-export default Page;
+export default Artist;
