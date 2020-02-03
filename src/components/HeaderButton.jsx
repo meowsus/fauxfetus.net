@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../assets/styles/HeaderButton.css';
+import './HeaderButton.css';
 
-import { ReactComponent as MenuIcon } from '../assets/images/menu.svg';
-import { ReactComponent as ContactIcon } from '../assets/images/contact.svg';
+import { ReactComponent as MenuIcon } from '../images/menu.svg';
+import { ReactComponent as ContactIcon } from '../images/contact.svg';
 
 function RadioButton(props) {
   const { type, onClick } = props;

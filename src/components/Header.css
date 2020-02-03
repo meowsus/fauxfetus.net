@@ -13,7 +13,6 @@
 
 .Header--full {
   height: 100%;
-  overflow-y: auto;
 }
 
   .Header a {
@@ -28,7 +27,10 @@
 
 
 .Header-row {
+  position: relative;
+  z-index: 20;
   padding: var(--spacing-unit);
+  box-shadow: 0 10px 5px var(--almost-black);
 }
 
   .Header-left {

@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../assets/styles/RadioButton.css';
+import './RadioButton.css';
 
-import playButton from '../assets/images/play.svg';
-import pauseButton from '../assets/images/pause.svg';
-import previousButton from '../assets/images/previous.svg';
-import nextButton from '../assets/images/next.svg';
+import playButton from '../images/play.svg';
+import pauseButton from '../images/pause.svg';
+import previousButton from '../images/previous.svg';
+import nextButton from '../images/next.svg';
 
 function RadioButton(props) {
   const { type, isPlaying, onClick } = props;

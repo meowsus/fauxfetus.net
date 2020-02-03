@@ -13,7 +13,7 @@ export function getTracks(data) {
         title: track.title,
         artist: track.artist,
         album: track.album,
-        file: track.file,
+        filePath: track.filePath,
       });
 
       return group;

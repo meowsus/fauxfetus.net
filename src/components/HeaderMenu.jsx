@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import '../assets/styles/HeaderMenu.css';
+import './HeaderMenu.css';
 
 function HeaderMenu(props) {
   const { artists, onLinkClick } = props;
 
   return (
-    <ul className="HeaderMenu [ constrainer ]">
+    <ul className="HeaderMenu">
       {artists.map((artist) => (
         <li className="HeaderMenu-item" key={artist.slug}>
           <Link

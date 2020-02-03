@@ -3,8 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { getTracks, getArtists } from '../reducers';
 
-import '../assets/styles/App.css';
-
+import './App.css';
 import Header from './Header';
 import Radio from './Radio';
 import Page from './Page';

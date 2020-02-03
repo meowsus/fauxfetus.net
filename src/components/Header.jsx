@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import '../assets/styles/Header.css';
+import './Header.css';
 
 import HeaderMenu from './HeaderMenu';
 import HeaderButton from './HeaderButton';

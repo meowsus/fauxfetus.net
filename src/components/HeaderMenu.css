@@ -4,6 +4,11 @@
   margin: 0 auto;
   padding: 0 var(--double-spacing-unit) var(--double-spacing-unit);
   list-style: none;
+  position: absolute;
+  z-index: 10;
+  top: var(--header-height);
+  bottom: 0;
+  overflow-y: auto;
 }
 
   .HeaderMenu-item {

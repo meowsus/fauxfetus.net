@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import shuffle from 'lodash.shuffle';
 
-import '../assets/styles/Radio.css';
+import './Radio.css';
 
 import RadioButton from './RadioButton';
 
@@ -47,20 +47,20 @@ class Radio extends React.Component {
 
   getTrack(index) {
     const {
-      file,
       album,
       title,
       artist,
+      filePath,
     } = this.tracks[index];
 
-    const fileUrl = process.env.PUBLIC_URL + file;
+    const fileUrl = filePath.replace(/^public/, process.env.PUBLIC_URL);
 
     return {
-      fileUrl,
       album,
       title,
-      artist,
       index,
+      artist,
+      fileUrl,
     };
   }
 

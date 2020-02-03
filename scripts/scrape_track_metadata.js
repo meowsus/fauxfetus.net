@@ -47,50 +47,57 @@ const sluggerize = (string) => {
     .replace(/-+$/, ''); // Trim - from end of text
 };
 
-const formatTrackData = (data, file) => ({
-  file: file.replace(/^public/, ''),
-  title: data.common.title,
-  album: data.common.album,
-  artist: data.common.artist,
-  titleSlug: sluggerize(data.common.title),
-  artistSlug: sluggerize(data.common.artist),
-  albumSlug: sluggerize(data.common.album),
-  extra: {
-    sampleRate: data.format.sampleRate,
-    bitrate: data.format.bitrate,
-    codecProfile: data.format.codecProfile,
-    duration: data.format.duration,
-    trackNumber: data.common.track.no,
-  },
-});
+const formatTrackData = (data, trackFilePath) => {
+  const artistPath = trackFilePath.split('/').slice(0, 3).join('/');
+  const albumPath = trackFilePath.split('/').slice(0, 4).join('/');
+
+  return {
+    trackFilePath,
+    albumPath: `${albumPath}/`,
+    artistPath: `${artistPath}/`,
+    title: data.common.title,
+    album: data.common.album,
+    artist: data.common.artist,
+    titleSlug: sluggerize(data.common.title),
+    albumSlug: sluggerize(data.common.album),
+    artistSlug: sluggerize(data.common.artist),
+    extra: {
+      sampleRate: data.format.sampleRate,
+      bitrate: data.format.bitrate,
+      codecProfile: data.format.codecProfile,
+      duration: data.format.duration,
+      trackNumber: data.common.track.no,
+    },
+  };
+};
+
+const findFiles = (dir, type = /\.[a-z0-9]$/i, fileList = []) => {
+  const files = fs.readdirSync(dir);
+
+  files.forEach((file) => {
+    const filePath = path.join(dir, file);
+    const fileStat = fs.lstatSync(filePath);
+
+    if (fileStat.isDirectory()) {
+      findFiles(filePath, type, fileList);
+    } else if (type.test(filePath)) {
+      fileList.push(filePath);
+    }
+  });
+
+  return fileList;
+};
 
 class ID3Scraper {
   constructor(audioDir) {
     this.audioDir = audioDir;
-    this.audioFiles = this.findAudioFiles(audioDir);
+    this.audioFiles = findFiles(audioDir, /\.mp3$/i);
 
     this.data = {};
 
     this.saveFiles = {
       catalog: './public/catalog.json',
     };
-  }
-
-  findAudioFiles(dir, fileList = []) {
-    const files = fs.readdirSync(dir);
-
-    files.forEach((file) => {
-      const filePath = path.join(dir, file);
-      const fileStat = fs.lstatSync(filePath);
-
-      if (fileStat.isDirectory()) {
-        this.findAudioFiles(filePath, fileList);
-      } else if ((/\.mp3$/).test(filePath)) {
-        fileList.push(filePath);
-      }
-    });
-
-    return fileList;
   }
 
   getMetadata() {
@@ -104,35 +111,43 @@ class ID3Scraper {
   }
 
   storeArtist(metadata) {
-    const { artistSlug, artist } = metadata;
+    const { artistPath, artistSlug, artist } = metadata;
 
     if (this.data[artistSlug]) { return; }
 
     this.data[artistSlug] = {
       name: artist,
+      path: artistPath,
       albums: {},
     };
   }
 
   storeAlbum(metadata) {
-    const { artistSlug, albumSlug, album } = metadata;
+    const {
+      album,
+      albumPath,
+      albumSlug,
+      artistSlug,
+    } = metadata;
 
     if (this.data[artistSlug].albums[albumSlug]) { return; }
 
     this.data[artistSlug].albums[albumSlug] = {
       name: album,
+      path: albumPath,
+      art: findFiles(albumPath, /\.(jpe?g|gif|png)$/i),
       tracks: [],
     };
   }
 
   storeTrack(metadata) {
     const {
-      artistSlug,
-      albumSlug,
-      titleSlug,
-      file,
       title,
       extra,
+      albumSlug,
+      titleSlug,
+      artistSlug,
+      trackFilePath,
     } = metadata;
 
     this.data[artistSlug].albums[albumSlug].tracks = (
@@ -140,10 +155,10 @@ class ID3Scraper {
     );
 
     this.data[artistSlug].albums[albumSlug].tracks.push({
-      file,
-      title,
-      titleSlug,
       extra,
+      title,
+      slug: titleSlug,
+      filePath: trackFilePath,
     });
   }
 
