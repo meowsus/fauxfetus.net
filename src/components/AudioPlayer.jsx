@@ -9,13 +9,36 @@ import './AudioPlayer.css';
 
 import AudioPlayerButton from './AudioPlayerButton';
 
+const getTrackIndex = (direction, fromIndex, playlist) => {
+  if (direction === 'previous') {
+    return fromIndex === 0 ? playlist.length - 1 : fromIndex - 1;
+  }
+
+  if (direction === 'next') {
+    return fromIndex === playlist.length - 1 ? 0 : fromIndex + 1;
+  }
+
+  return fromIndex;
+};
+
+const getTrack = (index, playlist) => {
+  const { filePath } = playlist[index];
+  const fileUrl = filePath.replace(/^public/, process.env.PUBLIC_URL);
+
+  return {
+    ...playlist[index],
+    index,
+    fileUrl,
+  };
+};
+
 class AudioPlayer extends React.Component {
   constructor(props) {
     super(props);
 
-    const { tracks } = props;
+    const { isPlaying, allTracks } = props;
 
-    this.allTracks = tracks;
+    this.allTracks = allTracks;
 
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     this.handleRandomButtonClick = this.handleRandomButtonClick.bind(this);
@@ -23,39 +46,8 @@ class AudioPlayer extends React.Component {
     this.handleNextButtonClick = this.handleNextButtonClick.bind(this);
 
     this.state = {
-      playlist: [],
       currentTrack: null,
-      isPlaying: false,
-      playStatus: Sound.status.STOPPED,
-    };
-  }
-
-  getTrackIndex(direction) {
-    const { currentTrack } = this.state;
-
-    if (direction === 'previous') {
-      return currentTrack.index === 0
-        ? this.playlist.length - 1
-        : currentTrack.index - 1;
-    }
-
-    if (direction === 'next') {
-      return currentTrack.index === this.playlist.length - 1
-        ? 0
-        : currentTrack.index + 1;
-    }
-
-    return currentTrack.index;
-  }
-
-  getTrack(index) {
-    const { filePath } = this.playlist[index];
-    const fileUrl = filePath.replace(/^public/, process.env.PUBLIC_URL);
-
-    return {
-      ...this.playlist[index],
-      index,
-      fileUrl,
+      playStatus: isPlaying ? Sound.status.PLAYING : Sound.status.STOPPED,
     };
   }
 
@@ -74,27 +66,32 @@ class AudioPlayer extends React.Component {
   }
 
   handleRandomButtonClick() {
-    this.playlist = shuffle(this.allTracks);
+    const playlist = shuffle(this.allTracks);
 
     this.setState({
+      playlist,
       isPlaying: true,
-      currentTrack: this.getTrack(0),
+      currentTrack: getTrack(0, playlist),
       playStatus: Sound.status.PLAYING,
     });
   }
 
   handlePreviousButtonClick() {
-    const trackIndex = this.getTrackIndex('previous');
-    const currentTrack = this.getTrack(trackIndex);
+    const { currentTrack, playlist } = this.state;
+    const trackIndex = getTrackIndex('previous', currentTrack.index, playlist);
 
-    this.setState({ currentTrack });
+    this.setState({
+      currentTrack: getTrack(trackIndex, playlist),
+    });
   }
 
   handleNextButtonClick() {
-    const trackIndex = this.getTrackIndex('next');
-    const currentTrack = this.getTrack(trackIndex);
+    const { currentTrack, playlist } = this.state;
+    const trackIndex = getTrackIndex('next', currentTrack.index, playlist);
 
-    this.setState({ currentTrack });
+    this.setState({
+      currentTrack: getTrack(trackIndex, playlist),
+    });
   }
 
   render() {
@@ -166,7 +163,8 @@ class AudioPlayer extends React.Component {
 }
 
 AudioPlayer.propTypes = {
-  tracks: PropTypes.arrayOf(
+  isPlaying: PropTypes.bool.isRequired,
+  allTracks: PropTypes.arrayOf(
     PropTypes.shape({
       slug: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,

@@ -16,6 +16,10 @@ class App extends React.Component {
     this.state = {
       catalog: {},
       isLoading: true,
+      audioPlayer: {
+        playlist: [],
+        isPlaying: false,
+      },
     };
   }
 
@@ -31,7 +35,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { catalog, isLoading } = this.state;
+    const { catalog, isLoading, audioPlayer } = this.state;
 
     return (
       <BrowserRouter>
@@ -43,7 +47,11 @@ class App extends React.Component {
               <Page catalog={catalog} />
             </div>
 
-            <AudioPlayer tracks={getTracks(catalog)} />
+            <AudioPlayer
+              allTracks={getTracks(catalog)}
+              playlist={audioPlayer.playlist}
+              isPlaying={audioPlayer.isPlaying}
+            />
           </div>
         )}
       </BrowserRouter>
