@@ -29,7 +29,12 @@ function HeaderMenu(props) {
 
 HeaderMenu.propTypes = {
   onLinkClick: PropTypes.func.isRequired,
-  artists: PropTypes.arrayOf(PropTypes.object).isRequired,
+  artists: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      slug: PropTypes.string.isRequired,
+    }).isRequired,
+  ).isRequired,
 };
 
 export default HeaderMenu;

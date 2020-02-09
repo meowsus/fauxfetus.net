@@ -1,0 +1,21 @@
+.AudioPlayerButton {
+  display: block;
+  width: 32px;
+  height: 32px;
+  opacity: 0.5;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+  border: 0;
+  transition: opacity 0.2s ease;
+}
+
+.AudioPlayerButton:hover {
+  opacity: 1;
+}
+
+  .AudioPlayerButton svg {
+    width: 32px;
+    height: 32px;
+    fill: var(--almost-white);
+  }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Home() {
+function HomePage() {
   return (
     <section>
       <h1>About Faux Fetus</h1>
@@ -43,5 +43,4 @@ function Home() {
   );
 }
 
-export default Home;
-
+export default HomePage;

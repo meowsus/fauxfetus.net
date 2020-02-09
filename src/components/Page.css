@@ -1,3 +1,10 @@
-.Page {
-  text-align: center;
-}
+.Page {}
+
+  .Page-head {
+    text-align: center;
+    margin-bottom: var(--double-spacing-unit);
+  }
+
+  .Page-head h1, .Page-head h2 {
+    margin: 0;
+  }

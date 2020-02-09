@@ -1,9 +1,9 @@
 import React from 'react';
 
-function About() {
+function AboutPage() {
   return (
     <section>
-      <h1>About Faux Fetus</h1>
+      <h1>AboutPage Faux Fetus</h1>
       <p>
         On March 15th, 2004, a nineteen year old boy saved his first Apache
         httpd.conf file for the last time. His Compaq Presario was humming,
@@ -42,4 +42,4 @@ function About() {
   );
 }
 
-export default About;
+export default AboutPage;

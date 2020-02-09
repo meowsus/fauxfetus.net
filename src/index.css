@@ -34,22 +34,33 @@ html {
 
 html, body {
   height: 100%;
-  background: var(--almost-black);
+  background: var(--gray);
 }
 
 
 /** TYPOGRAPHY */
 
-h1 {
+h1, h2 {
   font-family: var(--secondary-font);
-  border-bottom: 1px solid var(--yellow);
   line-height: 1.15;
   margin: var(--spacing-unit) 0;
+}
+
+h1 {
   font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.5rem;
 }
 
 a {
   color: var(--red);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 p, ul {
@@ -79,4 +90,12 @@ img {
   content: '';
   display: table;
   clear: both;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-right {
+  text-align: right;
 }

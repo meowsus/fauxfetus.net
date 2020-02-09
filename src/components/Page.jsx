@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 
 import './Page.css';
 
-import Home from './pages/Home';
-import About from './pages/About';
-import Artist from './pages/Artist';
-import Updates from './pages/Updates';
-import Contributions from './pages/Contributions';
+import Home from './pages/HomePage';
+import About from './pages/AboutPage';
+import Artist from './pages/ArtistPage';
+import Updates from './pages/UpdatesPage';
+import Contributions from './pages/ContributionsPage';
 
 function Page(props) {
   const { catalog } = props;

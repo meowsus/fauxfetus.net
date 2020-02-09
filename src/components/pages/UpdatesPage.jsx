@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Updates() {
+function UpdatesPage() {
   return (
     <section>
       <h1>Keeping Updated</h1>
@@ -55,4 +55,4 @@ function Updates() {
   );
 }
 
-export default Updates;
+export default UpdatesPage;

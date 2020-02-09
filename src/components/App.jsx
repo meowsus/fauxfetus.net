@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { getTracks, getArtists } from '../reducers';
+import { getTracks, getArtists } from '../transformers';
 
 import './App.css';
+
 import Header from './Header';
-import Radio from './Radio';
+import AudioPlayer from './AudioPlayer';
 import Page from './Page';
 
 class App extends React.Component {
@@ -38,14 +39,11 @@ class App extends React.Component {
           <div className="App">
             <Header artists={getArtists(catalog)} />
 
-            <div className="App-body">
-              <Radio tracks={getTracks(catalog)} />
-              <div className="constrainer">
-                <div className="App-content">
-                  <Page catalog={catalog} />
-                </div>
-              </div>
+            <div className="App-body [ constrainer ]">
+              <Page catalog={catalog} />
             </div>
+
+            <AudioPlayer tracks={getTracks(catalog)} />
           </div>
         )}
       </BrowserRouter>

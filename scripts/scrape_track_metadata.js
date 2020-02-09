@@ -78,7 +78,7 @@ const findFiles = (dir, type = /\.[a-z0-9]$/i, fileList = []) => {
     const filePath = path.join(dir, file);
     const fileStat = fs.lstatSync(filePath);
 
-    if (fileStat.isDirectory()) {
+    if (fileStat.isDirectory() && !file.startsWith('_')) {
       findFiles(filePath, type, fileList);
     } else if (type.test(filePath)) {
       fileList.push(filePath);

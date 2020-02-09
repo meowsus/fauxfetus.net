@@ -11,17 +11,17 @@ function Header(props) {
   const { artists } = props;
 
   const openMenu = (header) => {
-    const menuButton = header.querySelector('.HeaderButton--menu');
+    const menuIcon = header.querySelector('.HeaderButton-icon--menu');
 
     header.classList.add('Header--full');
-    menuButton.classList.add('HeaderButton--active');
+    menuIcon.classList.add('HeaderButton-icon--active');
   };
 
   const closeMenu = (header) => {
-    const menuButton = header.querySelector('.HeaderButton--menu');
+    const menuIcon = header.querySelector('.HeaderButton-icon--menu');
 
     header.classList.remove('Header--full');
-    menuButton.classList.remove('HeaderButton--active');
+    menuIcon.classList.remove('HeaderButton-icon--active');
   };
 
   const onHeaderButtonClick = (event) => {
@@ -40,27 +40,21 @@ function Header(props) {
     closeMenu(header);
   };
 
-  const onContactButtonClick = (event) => {};
+  const onContactButtonClick = (event) => {
+    event.preventDefault();
+    window.location.href = 'mailto:curt@fauxfetus.net';
+  };
 
   return (
     <div className="Header">
       <div className="Header-row [ constrainer clearfix ]">
-        <div className="Header-left">
-          <HeaderButton type="menu" onClick={onHeaderButtonClick} />
-        </div>
+        <HeaderButton type="menu" onClick={onHeaderButtonClick} />
 
-        <div className="Header-center">
-          <Link
-            to="/"
-            className="Header-logo"
-          >
-            FauxFetus
-          </Link>
-        </div>
+        <Link to="/" className="Header-logo">
+          FauxFetus
+        </Link>
 
-        <div className="Header-right">
-          <HeaderButton type="contact" onClick={onContactButtonClick} />
-        </div>
+        <HeaderButton type="contact" onClick={onContactButtonClick} />
       </div>
 
       <HeaderMenu artists={artists} onLinkClick={onHeaderMenuLinkClick} />

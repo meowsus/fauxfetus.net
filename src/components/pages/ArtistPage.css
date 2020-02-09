@@ -1,0 +1,19 @@
+.ArtistPage {}
+
+  .ArtistPage-albums {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: var(--double-spacing-unit);
+  }
+
+  @media (min-width: 768px) {
+    .ArtistPage-albums {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .ArtistPage-albums {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+  }

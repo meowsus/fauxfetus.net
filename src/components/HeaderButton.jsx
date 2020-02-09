@@ -6,19 +6,19 @@ import './HeaderButton.css';
 import { ReactComponent as MenuIcon } from '../images/menu.svg';
 import { ReactComponent as ContactIcon } from '../images/contact.svg';
 
-function RadioButton(props) {
+function HeaderButton(props) {
   const { type, onClick } = props;
 
   const buttonIcon = {
     menu: (
       <MenuIcon
-        className="HeaderButton-icon"
+        className="HeaderButton-icon HeaderButton-icon--menu"
         title="Main Menu Icon"
       />
     ),
     contact: (
       <ContactIcon
-        className="HeaderButton-icon"
+        className="HeaderButton-icon HeaderButton-icon--contact"
         title="Main Menu Icon"
       />
     ),
@@ -28,16 +28,16 @@ function RadioButton(props) {
     <button
       type="button"
       onClick={(event) => onClick(event)}
-      className={`HeaderButton HeaderButton--${type}`}
+      className="HeaderButton"
     >
       {buttonIcon[type]}
     </button>
   );
 }
 
-RadioButton.propTypes = {
+HeaderButton.propTypes = {
   type: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
-export default RadioButton;
+export default HeaderButton;

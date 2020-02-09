@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Contributions() {
+function ContributionsPage() {
   return (
     <section>
       <h1>Contributions</h1>
@@ -46,5 +46,4 @@ function Contributions() {
   );
 }
 
-export default Contributions;
-
+export default ContributionsPage;

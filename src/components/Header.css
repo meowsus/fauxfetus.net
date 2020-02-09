@@ -27,28 +27,15 @@
 
 
 .Header-row {
+  display: grid;
+  grid-template-columns: 32px auto 32px;
+  grid-gap: 0 var(--spacing-unit);
+  align-items: center;
   position: relative;
   z-index: 20;
   padding: var(--spacing-unit);
   box-shadow: 0 10px 5px var(--almost-black);
 }
-
-  .Header-left {
-    width: 15%;
-    float: left;
-  }
-
-  .Header-center {
-    width: 70%;
-    float: left;
-  }
-
-  .Header-right {
-    width: 15%;
-    float: left;
-    text-align: right;
-  }
-
 
 .Header-logo {
   display: block;

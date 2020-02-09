@@ -1,0 +1,47 @@
+.AlbumCard {
+  display: block;
+  position: relative;
+  outline: 1px solid var(--gray);
+  text-decoration: none;
+  background: var(--gray);
+  max-width: 100%;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+  .AlbumCard-title {
+    font-size: 1rem;
+    line-height: 1.1;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    color: var(--almost-black);
+    transition: color 0.2s ease-out;
+  }
+
+  .AlbumCard:hover .AlbumCard-title {
+    color: var(--red);
+  }
+
+  .AlbumCard-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.1;
+    transition: opacity 0.1s ease-out;
+  }
+
+  @media (min-width: 1000px) {
+    .AlbumCard-image {
+      opacity: 1;
+    }
+  }
+
+  .AlbumCard:hover .AlbumCard-image {
+    opacity: 0.1;
+  }
+

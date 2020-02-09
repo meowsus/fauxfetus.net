@@ -1,0 +1,41 @@
+.TrackList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: table;
+  width: 100%;
+}
+
+  .TrackList-item {
+    display: table-row;
+  }
+
+  .TrackList-item--heading {
+    font-weight: bold;
+    font-family: var(--secondary-font);
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .TrackList-item--heading {
+      display: table-row;
+    }
+  }
+
+    .TrackList-item > * {
+      display: table-cell;
+    }
+
+    .TrackList-item span {
+      padding: var(--half-spacing-unit);
+    }
+
+    .TrackList-item span:nth-child(n+3) {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .TrackList-item span:nth-child(n+3) {
+        display: table-cell;
+      }
+    }

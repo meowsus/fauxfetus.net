@@ -1,29 +1,23 @@
 export function getTracks(data) {
   return (
-    Object.values(data).flatMap((artist) => (
-      Object.values(artist.albums).flatMap((album) => (
+    Object.entries(data).flatMap(([artistSlug, artist]) => (
+      Object.entries(artist.albums).flatMap(([albumSlug, album]) => (
         album.tracks.map((tracks) => ({
           ...tracks,
-          artist: artist.name,
+          albumSlug,
+          artistSlug,
           album: album.name,
+          artist: artist.name,
         }))
       ))
-    )).reduce((group, track) => {
-      group.push({
-        title: track.title,
-        artist: track.artist,
-        album: track.album,
-        filePath: track.filePath,
-      });
-
-      return group;
-    }, [])
+    ))
   );
 }
 
 export function getArtists(data) {
   return (
-    Object.entries(data)
+    Object
+      .entries(data)
       .reduce((group, [slug, artist]) => {
         group.push({
           slug,

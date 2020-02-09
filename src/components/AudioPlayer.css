@@ -1,0 +1,41 @@
+.AudioPlayer {
+  position: fixed;
+  background: var(--red);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: var(--spacing-unit);
+}
+
+  .AudioPlayer-layout {
+    display: grid;
+    grid-template-columns: 32px 32px auto 32px 32px;
+    grid-column-gap: var(--half-spacing-unit);
+    align-items: center;
+  }
+
+    .AudioPlayer-display {
+      text-align: center;
+      color: var(--almost-white);
+      text-shadow: 1px 1px var(--almost-black);
+      line-height: 1.1;
+    }
+
+      .AudioPlayer-title {
+        display: block;
+      }
+
+      .AudioPlayer-info {
+        font-size: 0.8rem;
+      }
+
+        .AudioPlayer-info a {
+          color: var(--almost-white);
+          text-decoration: underline;
+        }
+
+        .AudioPlayer-info span {
+          display: inline-block;
+          margin: 0 var(--half-spacing-unit);
+        }
