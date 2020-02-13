@@ -18,7 +18,7 @@ function AudioPlayerButton(props) {
     ) : (
       <PlayButton title="Play audio" />
     ),
-    random: <RandomButton title="Play the Faux Fetus catalog, shuffled" />,
+    shuffleCatalog: <RandomButton title="Play Faux Fetus radio" />,
     previous: <PreviousButton title="Play previous track" />,
     next: <NextButton title="Play next track" />,
   };
@@ -34,9 +34,13 @@ function AudioPlayerButton(props) {
   );
 }
 
+AudioPlayerButton.defaultProps = {
+  isPlaying: false,
+};
+
 AudioPlayerButton.propTypes = {
+  isPlaying: PropTypes.bool,
   type: PropTypes.string.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
