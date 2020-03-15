@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Sound from 'react-sound';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -32,138 +32,115 @@ const getTrack = (index, playlist) => {
   };
 };
 
-class AudioPlayer extends React.Component {
-  constructor(props) {
-    super(props);
+const useCurrentTrack = () => {
+  const [currentTrack, setCurrentTrack] = useState(null);
+  return [currentTrack, setCurrentTrack];
+}
 
-    const { isPlaying, allTracks } = props;
+const usePlayStatus = () => {
+  const [playStatus, setPlayStatus] = useState(Sound.status.STOPPED);
+  return [playStatus, setPlayStatus];
+};
 
-    this.allTracks = allTracks;
+function AudioPlayer(props) {
+  const { allTracks, playlist, setPlaylist } = props;
 
-    this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
-    this.handleRandomButtonClick = this.handleRandomButtonClick.bind(this);
-    this.handlePreviousButtonClick = this.handlePreviousButtonClick.bind(this);
-    this.handleNextButtonClick = this.handleNextButtonClick.bind(this);
+  const [playStatus, setPlayStatus] = usePlayStatus();
+  const [currentTrack, setCurrentTrack] = useCurrentTrack();
 
-    this.state = {
-      currentTrack: null,
-      playStatus: isPlaying ? Sound.status.PLAYING : Sound.status.STOPPED,
-    };
-  }
+  const handleRandomButtonClick = () => {
+    const newPlaylist = shuffle(allTracks);
 
-  handlePlayButtonClick() {
-    const { currentTrack } = this.state;
+    setPlaylist(newPlaylist);
+    setCurrentTrack(getTrack(0, newPlaylist));
+    setPlayStatus(Sound.status.PLAYING);
+  };
 
+  const handlePlayButtonClick = () => {
     if (currentTrack === null) {
-      this.handleRandomButtonClick();
+      handleRandomButtonClick();
       return;
     }
 
-    this.setState((state) => ({
-      isPlaying: !state.isPlaying,
-      playStatus: !state.isPlaying ? Sound.status.PLAYING : Sound.status.PAUSED,
-    }));
-  }
+    switch (playStatus) {
+      case Sound.status.STOPPED:
+      case Sound.status.PAUSED:
+        setPlayStatus(Sound.status.PLAY);
+        break;
+      default:
+        setPlayStatus(Sound.status.PAUSED);
+        break;
+    }
+  };
 
-  handleRandomButtonClick() {
-    const playlist = shuffle(this.allTracks);
-
-    this.setState({
-      playlist,
-      isPlaying: true,
-      currentTrack: getTrack(0, playlist),
-      playStatus: Sound.status.PLAYING,
-    });
-  }
-
-  handlePreviousButtonClick() {
-    const { currentTrack, playlist } = this.state;
+  const handlePreviousButtonClick = () => {
     const trackIndex = getTrackIndex('previous', currentTrack.index, playlist);
+    setCurrentTrack(getTrack(trackIndex, playlist));
+  };
 
-    this.setState({
-      currentTrack: getTrack(trackIndex, playlist),
-    });
-  }
-
-  handleNextButtonClick() {
-    const { currentTrack, playlist } = this.state;
+  const handleNextButtonClick = () => {
     const trackIndex = getTrackIndex('next', currentTrack.index, playlist);
+    setCurrentTrack(getTrack(trackIndex, playlist));
+  };
 
-    this.setState({
-      currentTrack: getTrack(trackIndex, playlist),
-    });
-  }
+  return (
+    <div className="AudioPlayer">
+      <div className="AudioPlayer-layout">
+        <AudioPlayerButton
+          type="random"
+          playStatus={playStatus}
+          onClick={handleRandomButtonClick}
+        />
 
-  render() {
-    const {
-      isPlaying,
-      playStatus,
-      currentTrack,
-    } = this.state;
+        <AudioPlayerButton
+          type="play"
+          playStatus={playStatus}
+          onClick={handlePlayButtonClick}
+        />
 
-    const {
-      title,
-      artist,
-      album,
-      artistSlug,
-      albumSlug,
-      fileUrl,
-    } = currentTrack || {};
-
-    return (
-      <div className="AudioPlayer">
-        <div className="AudioPlayer-layout">
-          <AudioPlayerButton
-            type="random"
-            isPlaying={isPlaying}
-            onClick={this.handleRandomButtonClick}
-          />
-
-          <AudioPlayerButton
-            type="play"
-            isPlaying={isPlaying}
-            onClick={this.handlePlayButtonClick}
-          />
-
-          <div className="AudioPlayer-display">
-            <strong className="AudioPlayer-title">
-              {currentTrack === null ? 'Press Play to start Radio' : title}
-            </strong>
-            {currentTrack && (
-              <span className="AudioPlayer-info">
-                <span>from</span>
-                <Link to={`/artist/${artistSlug}/${albumSlug}`}>{album}</Link>
-                <span>by</span>
-                <Link to={`/artist/${artistSlug}`}>{artist}</Link>
-              </span>
+        <div className="AudioPlayer-display">
+          <strong className="AudioPlayer-title">
+            {currentTrack === null ? (
+              'Press Play to start Radio'
+            ) : (
+              currentTrack.title
             )}
-          </div>
-
-          <AudioPlayerButton
-            type="previous"
-            isPlaying={isPlaying}
-            onClick={this.handlePreviousButtonClick}
-          />
-
-          <AudioPlayerButton
-            type="next"
-            isPlaying={isPlaying}
-            onClick={this.handleNextButtonClick}
-          />
+          </strong>
+          {currentTrack && (
+            <span className="AudioPlayer-info">
+              <span>from</span>
+              <Link to={`/artist/${currentTrack.artistSlug}/${currentTrack.albumSlug}`}>{currentTrack.album}</Link>
+              <span>by</span>
+              <Link to={`/artist/${currentTrack.artistSlug}`}>{currentTrack.artist}</Link>
+            </span>
+          )}
         </div>
 
-        <Sound
-          url={fileUrl || ''}
+        <AudioPlayerButton
+          type="previous"
           playStatus={playStatus}
-          onFinishedPlaying={this.handleNextButtonClick}
+          onClick={handlePreviousButtonClick}
+        />
+
+        <AudioPlayerButton
+          type="next"
+          playStatus={playStatus}
+          onClick={handleNextButtonClick}
         />
       </div>
-    );
-  }
+
+      {currentTrack && (
+        <Sound
+          url={currentTrack.fileUrl || ''}
+          playStatus={playStatus}
+          onFinishedPlaying={handleNextButtonClick}
+        />
+      )}
+    </div>
+  );
 }
 
 AudioPlayer.propTypes = {
-  isPlaying: PropTypes.bool.isRequired,
   allTracks: PropTypes.arrayOf(
     PropTypes.shape({
       slug: PropTypes.string.isRequired,

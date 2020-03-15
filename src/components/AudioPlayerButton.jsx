@@ -36,8 +36,8 @@ function AudioPlayerButton(props) {
 
 AudioPlayerButton.propTypes = {
   type: PropTypes.string.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
+  isPlaying: PropTypes.bool.isRequired,
 };
 
 export default AudioPlayerButton;
