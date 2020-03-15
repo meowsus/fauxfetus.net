@@ -19,7 +19,7 @@ function HeaderButton(props) {
     contact: (
       <ContactIcon
         className="HeaderButton-icon HeaderButton-icon--contact"
-        title="Main Menu Icon"
+        title="Contact Icon"
       />
     ),
   };
