@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+rsync -avzh meowsus@fauxfetus.net:fauxfetus.net/audio/ public/audio/
