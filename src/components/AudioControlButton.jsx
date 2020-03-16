@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './AudioPlayerButton.css';
+import './AudioControlButton.css';
 
 import { ReactComponent as PlayButton } from '../images/play.svg';
 import { ReactComponent as PauseButton } from '../images/pause.svg';
@@ -9,7 +9,7 @@ import { ReactComponent as RandomButton } from '../images/random.svg';
 import { ReactComponent as PreviousButton } from '../images/previous.svg';
 import { ReactComponent as NextButton } from '../images/next.svg';
 
-function AudioPlayerButton(props) {
+function AudioControlButton(props) {
   const { type, isPlaying, onClick } = props;
 
   const buttonTypes = {
@@ -26,7 +26,7 @@ function AudioPlayerButton(props) {
   return (
     <button
       type="button"
-      className={`AudioPlayerButton AudioPlayerButton--${type}`}
+      className={`AudioControlButton AudioControlButton--${type}`}
       onClick={onClick}
     >
       {buttonTypes[type]}
@@ -34,10 +34,14 @@ function AudioPlayerButton(props) {
   );
 }
 
-AudioPlayerButton.propTypes = {
-  type: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
+AudioControlButton.defaultProps = {
+  isPlaying: false,
 };
 
-export default AudioPlayerButton;
+AudioControlButton.propTypes = {
+  isPlaying: PropTypes.bool,
+  type: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
+export default AudioControlButton;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sound from 'react-sound';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -7,7 +7,7 @@ import shuffle from 'lodash.shuffle';
 
 import './AudioPlayer.css';
 
-import AudioPlayerButton from './AudioPlayerButton';
+import AudioControlButton from './AudioControlButton';
 
 const getTrackIndex = (direction, fromIndex, playlist) => {
   if (direction === 'previous') {
@@ -86,16 +86,15 @@ function AudioPlayer(props) {
   return (
     <div className="AudioPlayer">
       <div className="AudioPlayer-layout">
-        <AudioPlayerButton
+        <AudioControlButton
           type="random"
-          playStatus={playStatus}
           onClick={handleRandomButtonClick}
         />
 
-        <AudioPlayerButton
+        <AudioControlButton
           type="play"
-          playStatus={playStatus}
           onClick={handlePlayButtonClick}
+          isPlaying={playStatus === Sound.status.PLAYING}
         />
 
         <div className="AudioPlayer-display">
@@ -116,15 +115,13 @@ function AudioPlayer(props) {
           )}
         </div>
 
-        <AudioPlayerButton
+        <AudioControlButton
           type="previous"
-          playStatus={playStatus}
           onClick={handlePreviousButtonClick}
         />
 
-        <AudioPlayerButton
+        <AudioControlButton
           type="next"
-          playStatus={playStatus}
           onClick={handleNextButtonClick}
         />
       </div>

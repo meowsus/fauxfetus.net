@@ -1,4 +1,4 @@
-.AudioPlayerButton {
+.AudioControlButton {
   display: block;
   width: 32px;
   height: 32px;
@@ -10,11 +10,11 @@
   transition: opacity 0.2s ease;
 }
 
-.AudioPlayerButton:hover {
+.AudioControlButton:hover {
   opacity: 1;
 }
 
-  .AudioPlayerButton svg {
+  .AudioControlButton svg {
     width: 32px;
     height: 32px;
     fill: var(--almost-white);
