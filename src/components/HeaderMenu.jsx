@@ -2,14 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+import { getArtists } from '../transformers';
+import CONSTANTS from '../constants';
+
 import './HeaderMenu.css';
 
 function HeaderMenu(props) {
-  const { artists, onLinkClick } = props;
+  const { catalog, onLinkClick } = props;
 
   return (
     <ul className="HeaderMenu">
-      {artists.map((artist) => (
+      {getArtists(catalog).map((artist) => (
         <li className="HeaderMenu-item" key={artist.slug}>
           <Link
             onClick={onLinkClick}
@@ -29,12 +32,7 @@ function HeaderMenu(props) {
 
 HeaderMenu.propTypes = {
   onLinkClick: PropTypes.func.isRequired,
-  artists: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      slug: PropTypes.string.isRequired,
-    }).isRequired,
-  ).isRequired,
+  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
 };
 
 export default HeaderMenu;

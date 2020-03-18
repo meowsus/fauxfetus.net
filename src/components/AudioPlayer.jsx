@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sound from 'react-sound';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import shuffle from 'lodash.shuffle';
+
+import CONSTANTS from '../constants';
+import { getTracks } from '../transformers';
 
 import './AudioPlayer.css';
 
@@ -32,24 +35,14 @@ const getTrack = (index, playlist) => {
   };
 };
 
-const useCurrentTrack = () => {
-  const [currentTrack, setCurrentTrack] = useState(null);
-  return [currentTrack, setCurrentTrack];
-}
-
-const usePlayStatus = () => {
-  const [playStatus, setPlayStatus] = useState(Sound.status.STOPPED);
-  return [playStatus, setPlayStatus];
-};
-
 function AudioPlayer(props) {
-  const { allTracks, playlist, setPlaylist } = props;
+  const { catalog, playlist, setPlaylist } = props;
 
-  const [playStatus, setPlayStatus] = usePlayStatus();
-  const [currentTrack, setCurrentTrack] = useCurrentTrack();
+  const [playStatus, setPlayStatus] = useState(Sound.status.STOPPED);
+  const [currentTrack, setCurrentTrack] = useState(null);
 
   const handleRandomButtonClick = () => {
-    const newPlaylist = shuffle(allTracks);
+    const newPlaylist = shuffle(getTracks(catalog));
 
     setPlaylist(newPlaylist);
     setCurrentTrack(getTrack(0, newPlaylist));
@@ -82,6 +75,12 @@ function AudioPlayer(props) {
     const trackIndex = getTrackIndex('next', currentTrack.index, playlist);
     setCurrentTrack(getTrack(trackIndex, playlist));
   };
+
+  //useEffect(() => {
+  //  if (playlist.length === 0) { return; }
+  //  setCurrentTrack(getTrack(0, playlist));
+  //  handlePlayButtonClick();
+  //}, [playlist]);
 
   return (
     <div className="AudioPlayer">
@@ -138,7 +137,8 @@ function AudioPlayer(props) {
 }
 
 AudioPlayer.propTypes = {
-  allTracks: PropTypes.arrayOf(
+  setPlaylist: PropTypes.func.isRequired,
+  playlist: PropTypes.arrayOf(
     PropTypes.shape({
       slug: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -156,6 +156,7 @@ AudioPlayer.propTypes = {
       }).isRequired,
     }).isRequired,
   ).isRequired,
+  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
 };
 
 export default AudioPlayer;

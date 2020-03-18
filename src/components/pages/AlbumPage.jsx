@@ -7,7 +7,7 @@ import '../Page.css';
 import TrackList from '../TrackList';
 
 function AlbumPage(props) {
-  const { artist } = props;
+  const { artist, setPlaylist } = props;
   const { artistSlug, albumSlug } = useParams();
 
   const album = artist.albums[albumSlug];
@@ -23,12 +23,13 @@ function AlbumPage(props) {
         <h2>{album.name}</h2>
       </div>
 
-      <TrackList tracks={album.tracks} />
+      <TrackList tracks={album.tracks} setPlaylist={setPlaylist} />
     </section>
   );
 }
 
 AlbumPage.propTypes = {
+  setPlaylist: PropTypes.func.isRequired,
   artist: PropTypes.shape({
     name: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,

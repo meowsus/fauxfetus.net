@@ -11,11 +11,13 @@ import {
 import '../Page.css';
 import './ArtistPage.css';
 
-import Album from './AlbumPage';
+import CONSTANTS from '../../constants';
+
+import AlbumPage from './AlbumPage';
 import AlbumCard from '../AlbumCard';
 
 function ArtistPage(props) {
-  const { catalog } = props;
+  const { catalog, setPlaylist } = props;
   const { artistSlug } = useParams();
   const { path } = useRouteMatch();
 
@@ -49,42 +51,17 @@ function ArtistPage(props) {
 
       <Route
         path={`${path}/:albumSlug`}
-        render={() => <Album artist={artist} />}
+        render={() => (
+          <AlbumPage artist={artist} setPlaylist={setPlaylist} />
+        )}
       />
     </Switch>
   );
 }
 
 ArtistPage.propTypes = {
-  catalog: PropTypes.objectOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired,
-      albums: PropTypes.objectOf(
-        PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          path: PropTypes.string.isRequired,
-          art: PropTypes.arrayOf(
-            PropTypes.string.isRequired,
-          ).isRequired,
-          tracks: PropTypes.arrayOf(
-            PropTypes.shape({
-              slug: PropTypes.string.isRequired,
-              title: PropTypes.string.isRequired,
-              filePath: PropTypes.string.isRequired,
-              extra: PropTypes.shape({
-                bitrate: PropTypes.number.isRequired,
-                duration: PropTypes.number.isRequired,
-                sampleRate: PropTypes.number.isRequired,
-                trackNumber: PropTypes.number.isRequired,
-                codecProfile: PropTypes.string.isRequired,
-              }).isRequired,
-            }).isRequired,
-          ).isRequired,
-        }).isRequired,
-      ).isRequired,
-    }).isRequired,
-  ).isRequired,
+  setPlaylist: PropTypes.func.isRequired,
+  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
 };
 
 export default ArtistPage;

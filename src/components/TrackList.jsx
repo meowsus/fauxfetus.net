@@ -3,29 +3,35 @@ import PropTypes from 'prop-types';
 
 import './TrackList.css';
 
+import AudioControlButton from './AudioControlButton';
+
+const formatDuration = (duration) => {
+  let seconds = Math.floor(duration);
+  const minutes = Math.round(seconds / 60);
+
+  seconds %= 60;
+
+  return `${minutes}:${seconds > 9 ? seconds : `0${seconds}`}`;
+};
+
+const displayQuality = (extra) => {
+  const { codecProfile } = extra;
+
+  if (codecProfile.startsWith('V')) {
+    return `${codecProfile} MP3`;
+  }
+
+  let { bitrate } = extra;
+  bitrate = Math.round(bitrate / 1000);
+
+  return `${bitrate} ${codecProfile} MP3`;
+};
+
 function TrackList(props) {
-  const { tracks } = props;
+  const { tracks, setPlaylist } = props;
 
-  const formatDuration = (duration) => {
-    let seconds = Math.floor(duration);
-    const minutes = Math.round(seconds / 60);
-
-    seconds %= 60;
-
-    return `${minutes}:${seconds > 9 ? seconds : `0${seconds}`}`;
-  };
-
-  const displayQuality = (extra) => {
-    const { codecProfile } = extra;
-
-    if (codecProfile.startsWith('V')) {
-      return `${codecProfile} MP3`;
-    }
-
-    let { bitrate } = extra;
-    bitrate = Math.round(bitrate / 1000);
-
-    return `${bitrate} ${codecProfile} MP3`;
+  const handlePlayButtonClick = () => {
+    setPlaylist(tracks);
   };
 
   return (
@@ -40,7 +46,10 @@ function TrackList(props) {
       {tracks.map((track) => (
         <li key={track.filePath} className="TrackList-item">
           <span>
-            Playbutton
+            <AudioControlButton
+              type="play"
+              onClick={handlePlayButtonClick}
+            />
           </span>
           <span>{track.title}</span>
           <span className="align-right">{track.extra.trackNumber}</span>
@@ -55,6 +64,7 @@ function TrackList(props) {
 }
 
 TrackList.propTypes = {
+  setPlaylist: PropTypes.func.isRequired,
   tracks: PropTypes.arrayOf(
     PropTypes.shape({
       slug: PropTypes.string.isRequired,

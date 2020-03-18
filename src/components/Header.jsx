@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 
 import './Header.css';
 
+import CONSTANTS from '../constants';
+
 import HeaderMenu from './HeaderMenu';
 import HeaderButton from './HeaderButton';
 
 function Header(props) {
-  const { artists } = props;
+  const { catalog } = props;
 
   const openMenu = (header) => {
     const menuIcon = header.querySelector('.HeaderButton-icon--menu');
@@ -57,13 +59,13 @@ function Header(props) {
         <HeaderButton type="contact" onClick={onContactButtonClick} />
       </div>
 
-      <HeaderMenu artists={artists} onLinkClick={onHeaderMenuLinkClick} />
+      <HeaderMenu catalog={catalog} onLinkClick={onHeaderMenuLinkClick} />
     </div>
   );
 }
 
 Header.propTypes = {
-  artists: PropTypes.arrayOf(PropTypes.object).isRequired,
+  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
 };
 
 export default Header;

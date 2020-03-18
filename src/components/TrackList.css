@@ -10,6 +10,10 @@
     display: table-row;
   }
 
+  .TrackList-item .AudioControlButton svg {
+    fill: var(--red);
+  }
+
   .TrackList-item--heading {
     font-weight: bold;
     font-family: var(--secondary-font);
@@ -24,6 +28,7 @@
 
     .TrackList-item > * {
       display: table-cell;
+      vertical-align: middle;
     }
 
     .TrackList-item span {

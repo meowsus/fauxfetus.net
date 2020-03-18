@@ -4,26 +4,30 @@ import PropTypes from 'prop-types';
 
 import './Page.css';
 
-import Home from './pages/HomePage';
-import About from './pages/AboutPage';
-import Artist from './pages/ArtistPage';
-import Updates from './pages/UpdatesPage';
-import Contributions from './pages/ContributionsPage';
+import CONSTANTS from '../constants';
+
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import ArtistPage from './pages/ArtistPage';
+import UpdatesPage from './pages/UpdatesPage';
+import ContributionsPage from './pages/ContributionsPage';
 
 function Page(props) {
-  const { catalog } = props;
+  const { catalog, setPlaylist } = props;
 
   return (
     <div className="Page">
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/updates" component={Updates} />
-        <Route path="/contributions" component={Contributions} />
+        <Route exact path="/" component={HomePage} />
+        <Route path="/about" component={AboutPage} />
+        <Route path="/updates" component={UpdatesPage} />
+        <Route path="/contributions" component={ContributionsPage} />
 
         <Route
           path="/artist/:artistSlug"
-          render={() => <Artist catalog={catalog} />}
+          render={() => (
+            <ArtistPage catalog={catalog} setPlaylist={setPlaylist} />
+          )}
         />
       </Switch>
     </div>
@@ -31,33 +35,8 @@ function Page(props) {
 }
 
 Page.propTypes = {
-  catalog: PropTypes.objectOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired,
-      albums: PropTypes.objectOf(
-        PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          path: PropTypes.string.isRequired,
-          art: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-          tracks: PropTypes.arrayOf(
-            PropTypes.shape({
-              slug: PropTypes.string.isRequired,
-              title: PropTypes.string.isRequired,
-              filePath: PropTypes.string.isRequired,
-              extra: PropTypes.shape({
-                sampleRate: PropTypes.number.isRequired,
-                bitrate: PropTypes.number.isRequired,
-                codecProfile: PropTypes.string.isRequired,
-                duration: PropTypes.number.isRequired,
-                trackNumber: PropTypes.number.isRequired,
-              }).isRequired,
-            }),
-          ).isRequired,
-        }),
-      ).isRequired,
-    }),
-  ).isRequired,
+  setPlaylist: PropTypes.func.isRequired,
+  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
 };
 
 
