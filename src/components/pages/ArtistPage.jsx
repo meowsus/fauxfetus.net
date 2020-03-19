@@ -8,10 +8,11 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 
+import CONSTANTS from '../../constants';
+import { makeAlbumsFromArtist } from '../../transformers';
+
 import '../Page.css';
 import './ArtistPage.css';
-
-import CONSTANTS from '../../constants';
 
 import AlbumPage from './AlbumPage';
 import AlbumCard from '../AlbumCard';
@@ -22,11 +23,6 @@ function ArtistPage(props) {
   const { path } = useRouteMatch();
 
   const artist = catalog[artistSlug];
-  const albums = (
-    Object
-      .entries(artist.albums)
-      .map(([k, v]) => ({ ...v, slug: k }))
-  );
 
   return (
     <Switch>
@@ -37,7 +33,7 @@ function ArtistPage(props) {
           </div>
 
           <div className="ArtistPage-albums">
-            {albums.map((album) => (
+            {makeAlbumsFromArtist(artist).map((album) => (
               <AlbumCard
                 grid
                 key={album.path}
@@ -61,7 +57,9 @@ function ArtistPage(props) {
 
 ArtistPage.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
-  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
+  catalog: PropTypes.objectOf(
+    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
+  ).isRequired,
 };
 
 export default ArtistPage;

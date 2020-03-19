@@ -65,7 +65,9 @@ function Header(props) {
 }
 
 Header.propTypes = {
-  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
+  catalog: PropTypes.objectOf(
+    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
+  ).isRequired,
 };
 
 export default Header;

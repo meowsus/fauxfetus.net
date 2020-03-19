@@ -1,23 +1,31 @@
-export function getTracks(data) {
+export function makePlaylistFromAlbumTracks(tracks, albumData, artistData) {
   return (
-    Object.entries(data).flatMap(([artistSlug, artist]) => (
+    tracks.map((track) => ({
+      ...track,
+      ...albumData,
+      ...artistData,
+    }))
+  );
+}
+
+export function makePlaylistFromCatalog(catalog) {
+  return (
+    Object.entries(catalog).flatMap(([artistSlug, artist]) => (
       Object.entries(artist.albums).flatMap(([albumSlug, album]) => (
-        album.tracks.map((tracks) => ({
-          ...tracks,
-          albumSlug,
-          artistSlug,
-          album: album.name,
-          artist: artist.name,
-        }))
+        makePlaylistFromAlbumTracks(
+          album.tracks,
+          { albumSlug, album: album.name },
+          { artistSlug, artist: artist.name },
+        )
       ))
     ))
   );
 }
 
-export function getArtists(data) {
+export function makeArtistsFromCatalog(catalog) {
   return (
     Object
-      .entries(data)
+      .entries(catalog)
       .reduce((group, [slug, artist]) => {
         group.push({
           slug,
@@ -29,5 +37,13 @@ export function getArtists(data) {
       .sort((a, b) => (
         (a.slug < b.slug) ? -1 : 1
       ))
+  );
+}
+
+export function makeAlbumsFromArtist(artist) {
+  return (
+    Object
+      .entries(artist.albums)
+      .map(([k, v]) => ({ ...v, slug: k }))
   );
 }

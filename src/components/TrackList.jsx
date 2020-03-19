@@ -28,11 +28,7 @@ const displayQuality = (extra) => {
 };
 
 function TrackList(props) {
-  const { tracks, setPlaylist } = props;
-
-  const handlePlayButtonClick = () => {
-    setPlaylist(tracks);
-  };
+  const { tracks, onAudioControlButtonClick } = props;
 
   return (
     <ol className="TrackList">
@@ -48,7 +44,7 @@ function TrackList(props) {
           <span>
             <AudioControlButton
               type="play"
-              onClick={handlePlayButtonClick}
+              onClick={() => onAudioControlButtonClick(track.extra.trackNumber)}
             />
           </span>
           <span>{track.title}</span>
@@ -64,7 +60,7 @@ function TrackList(props) {
 }
 
 TrackList.propTypes = {
-  setPlaylist: PropTypes.func.isRequired,
+  onAudioControlButtonClick: PropTypes.func.isRequired,
   tracks: PropTypes.arrayOf(
     PropTypes.shape({
       slug: PropTypes.string.isRequired,

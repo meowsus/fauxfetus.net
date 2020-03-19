@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { getArtists } from '../transformers';
+import { makeArtistsFromCatalog } from '../transformers';
 import CONSTANTS from '../constants';
 
 import './HeaderMenu.css';
@@ -12,7 +12,7 @@ function HeaderMenu(props) {
 
   return (
     <ul className="HeaderMenu">
-      {getArtists(catalog).map((artist) => (
+      {makeArtistsFromCatalog(catalog).map((artist) => (
         <li className="HeaderMenu-item" key={artist.slug}>
           <Link
             onClick={onLinkClick}
@@ -32,7 +32,9 @@ function HeaderMenu(props) {
 
 HeaderMenu.propTypes = {
   onLinkClick: PropTypes.func.isRequired,
-  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
+  catalog: PropTypes.objectOf(
+    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
+  ).isRequired,
 };
 
 export default HeaderMenu;

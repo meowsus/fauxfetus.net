@@ -36,7 +36,9 @@ function Page(props) {
 
 Page.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
-  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
+  catalog: PropTypes.objectOf(
+    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
+  ).isRequired,
 };
 
 

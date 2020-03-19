@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import shuffle from 'lodash.shuffle';
 
 import CONSTANTS from '../constants';
-import { getTracks } from '../transformers';
+import { makePlaylistFromCatalog } from '../transformers';
 
 import './AudioPlayer.css';
 
@@ -42,10 +42,10 @@ function AudioPlayer(props) {
   const [currentTrack, setCurrentTrack] = useState(null);
 
   const handleRandomButtonClick = () => {
-    const newPlaylist = shuffle(getTracks(catalog));
+    const catalogPlaylist = shuffle(makePlaylistFromCatalog(catalog));
 
-    setPlaylist(newPlaylist);
-    setCurrentTrack(getTrack(0, newPlaylist));
+    setPlaylist(shuffle(catalogPlaylist));
+    setCurrentTrack(getTrack(0, catalogPlaylist));
     setPlayStatus(Sound.status.PLAYING);
   };
 
@@ -76,11 +76,12 @@ function AudioPlayer(props) {
     setCurrentTrack(getTrack(trackIndex, playlist));
   };
 
-  //useEffect(() => {
-  //  if (playlist.length === 0) { return; }
+  useEffect(() => {
+    if (playlist.length === 0) { return; }
+    console.log(playlist);
   //  setCurrentTrack(getTrack(0, playlist));
   //  handlePlayButtonClick();
-  //}, [playlist]);
+  }, [playlist]);
 
   return (
     <div className="AudioPlayer">
@@ -139,24 +140,11 @@ function AudioPlayer(props) {
 AudioPlayer.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
   playlist: PropTypes.arrayOf(
-    PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      album: PropTypes.string.isRequired,
-      artist: PropTypes.string.isRequired,
-      filePath: PropTypes.string.isRequired,
-      albumSlug: PropTypes.string.isRequired,
-      artistSlug: PropTypes.string.isRequired,
-      extra: PropTypes.shape({
-        bitrate: PropTypes.number.isRequired,
-        duration: PropTypes.number.isRequired,
-        sampleRate: PropTypes.number.isRequired,
-        trackNumber: PropTypes.number.isRequired,
-        codecProfile: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
+    CONSTANTS.sharedPropTypes.playlistEntry.isRequired,
   ).isRequired,
-  catalog: CONSTANTS.sharedPropTypes.catalog.isRequired,
+  catalog: PropTypes.objectOf(
+    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
+  ).isRequired,
 };
 
 export default AudioPlayer;
