@@ -20,8 +20,8 @@ function AlbumPage(props) {
     { artistSlug, artist: artist.name },
   );
 
-  const handleAudioControlButtonClick = (trackNumber) => {
-    setPlaylist(playlist);
+  const handleAudioControlButtonClick = (trackIndex) => {
+    setPlaylist(playlist.slice(trackIndex));
   };
 
   return (

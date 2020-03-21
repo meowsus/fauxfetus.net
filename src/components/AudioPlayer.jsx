@@ -45,8 +45,6 @@ function AudioPlayer(props) {
     const catalogPlaylist = shuffle(makePlaylistFromCatalog(catalog));
 
     setPlaylist(shuffle(catalogPlaylist));
-    setCurrentTrack(getTrack(0, catalogPlaylist));
-    setPlayStatus(Sound.status.PLAYING);
   };
 
   const handlePlayButtonClick = () => {
@@ -55,14 +53,10 @@ function AudioPlayer(props) {
       return;
     }
 
-    switch (playStatus) {
-      case Sound.status.STOPPED:
-      case Sound.status.PAUSED:
-        setPlayStatus(Sound.status.PLAY);
-        break;
-      default:
-        setPlayStatus(Sound.status.PAUSED);
-        break;
+    if (playStatus === Sound.status.PLAYING) {
+      setPlayStatus(Sound.status.PAUSED);
+    } else {
+      setPlayStatus(Sound.status.PLAYING);
     }
   };
 
@@ -78,10 +72,14 @@ function AudioPlayer(props) {
 
   useEffect(() => {
     if (playlist.length === 0) { return; }
-    console.log(playlist);
-  //  setCurrentTrack(getTrack(0, playlist));
-  //  handlePlayButtonClick();
-  }, [playlist]);
+    setCurrentTrack(getTrack(0, playlist));
+
+    if (playStatus === Sound.status.PLAYING) {
+      setPlayStatus(Sound.status.STOPPED);
+    }
+
+    setPlayStatus(Sound.status.PLAYING);
+  }, [playlist, playStatus, setPlayStatus]);
 
   return (
     <div className="AudioPlayer">

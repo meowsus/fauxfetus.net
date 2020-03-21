@@ -39,12 +39,12 @@ function TrackList(props) {
         <span className="align-right">Quality</span>
         <span className="align-right">Length</span>
       </li>
-      {tracks.map((track) => (
+      {tracks.map((track, trackIndex) => (
         <li key={track.filePath} className="TrackList-item">
           <span>
             <AudioControlButton
               type="play"
-              onClick={() => onAudioControlButtonClick(track.extra.trackNumber)}
+              onClick={() => onAudioControlButtonClick(trackIndex)}
             />
           </span>
           <span>{track.title}</span>
