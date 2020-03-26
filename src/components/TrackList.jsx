@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import './TrackList.css';
 
+import CONSTANTS from '../constants';
+
 import AudioControlButton from './AudioControlButton';
 
 const formatDuration = (duration) => {
@@ -61,19 +63,9 @@ function TrackList(props) {
 
 TrackList.propTypes = {
   onAudioControlButtonClick: PropTypes.func.isRequired,
+
   tracks: PropTypes.arrayOf(
-    PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      filePath: PropTypes.string.isRequired,
-      extra: PropTypes.shape({
-        bitrate: PropTypes.number.isRequired,
-        duration: PropTypes.number.isRequired,
-        sampleRate: PropTypes.number.isRequired,
-        trackNumber: PropTypes.number.isRequired,
-        codecProfile: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
+    CONSTANTS.sharedPropTypes.trackEntry.isRequired,
   ).isRequired,
 };
 

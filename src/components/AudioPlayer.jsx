@@ -1,54 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Sound from 'react-sound';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import shuffle from 'lodash.shuffle';
+import isEmpty from 'lodash.isempty';
 
 import CONSTANTS from '../constants';
+
 import { makePlaylistFromCatalog } from '../transformers';
 
 import './AudioPlayer.css';
 
 import AudioControlButton from './AudioControlButton';
 
-const getTrackIndex = (direction, fromIndex, playlist) => {
-  if (direction === 'previous') {
-    return fromIndex === 0 ? playlist.length - 1 : fromIndex - 1;
-  }
-
-  if (direction === 'next') {
-    return fromIndex === playlist.length - 1 ? 0 : fromIndex + 1;
-  }
-
-  return fromIndex;
-};
-
-const getTrack = (index, playlist) => {
-  const { filePath } = playlist[index];
-  const fileUrl = filePath.replace(/^public/, process.env.PUBLIC_URL);
-
-  return {
-    ...playlist[index],
-    index,
-    fileUrl,
-  };
-};
-
 function AudioPlayer(props) {
-  const { catalog, playlist, setPlaylist } = props;
+  const {
+    catalog,
+    playlist,
+    playStatus,
+    setPlaylist,
+    currentTrack,
+    currentTrack: {
+      albumSlug,
+      artistSlug,
+      album: albumName,
+      index: trackIndex,
+      title: trackTitle,
+      fileUrl: trackUrl,
+      artist: artistName,
+    },
+    setTrackIndex,
+    setPlayStatus,
+  } = props;
 
-  const [playStatus, setPlayStatus] = useState(Sound.status.STOPPED);
-  const [currentTrack, setCurrentTrack] = useState(null);
+  const getPreviousTrackIndex = () => (
+    (trackIndex - 1 < 0) ? 0 : trackIndex.index - 1
+  );
+
+  const getNextTrackIndex = () => (
+    (trackIndex + 1 >= playlist.length) ? playlist.length : trackIndex + 1
+  );
 
   const handleRandomButtonClick = () => {
-    const catalogPlaylist = shuffle(makePlaylistFromCatalog(catalog));
-
+    const catalogPlaylist = makePlaylistFromCatalog(catalog);
     setPlaylist(shuffle(catalogPlaylist));
+    setTrackIndex(0);
   };
 
   const handlePlayButtonClick = () => {
-    if (currentTrack === null) {
+    if (isEmpty(currentTrack)) {
       handleRandomButtonClick();
       return;
     }
@@ -61,25 +62,12 @@ function AudioPlayer(props) {
   };
 
   const handlePreviousButtonClick = () => {
-    const trackIndex = getTrackIndex('previous', currentTrack.index, playlist);
-    setCurrentTrack(getTrack(trackIndex, playlist));
+    setTrackIndex(getPreviousTrackIndex());
   };
 
   const handleNextButtonClick = () => {
-    const trackIndex = getTrackIndex('next', currentTrack.index, playlist);
-    setCurrentTrack(getTrack(trackIndex, playlist));
+    setTrackIndex(getNextTrackIndex());
   };
-
-  useEffect(() => {
-    if (playlist.length === 0) { return; }
-    setCurrentTrack(getTrack(0, playlist));
-
-    if (playStatus === Sound.status.PLAYING) {
-      setPlayStatus(Sound.status.STOPPED);
-    }
-
-    setPlayStatus(Sound.status.PLAYING);
-  }, [playlist, playStatus, setPlayStatus]);
 
   return (
     <div className="AudioPlayer">
@@ -97,18 +85,14 @@ function AudioPlayer(props) {
 
         <div className="AudioPlayer-display">
           <strong className="AudioPlayer-title">
-            {currentTrack === null ? (
-              'Press Play to start Radio'
-            ) : (
-              currentTrack.title
-            )}
+            {isEmpty(currentTrack) ? 'Press Play to start Radio' : trackTitle}
           </strong>
-          {currentTrack && (
+          {!isEmpty(currentTrack) && (
             <span className="AudioPlayer-info">
               <span>from</span>
-              <Link to={`/artist/${currentTrack.artistSlug}/${currentTrack.albumSlug}`}>{currentTrack.album}</Link>
+              <Link to={`/artist/${artistSlug}/${albumSlug}`}>{albumName}</Link>
               <span>by</span>
-              <Link to={`/artist/${currentTrack.artistSlug}`}>{currentTrack.artist}</Link>
+              <Link to={`/artist/${artistSlug}`}>{artistName}</Link>
             </span>
           )}
         </div>
@@ -126,7 +110,7 @@ function AudioPlayer(props) {
 
       {currentTrack && (
         <Sound
-          url={currentTrack.fileUrl || ''}
+          url={trackUrl || ''}
           playStatus={playStatus}
           onFinishedPlaying={handleNextButtonClick}
         />
@@ -135,11 +119,23 @@ function AudioPlayer(props) {
   );
 }
 
+AudioPlayer.defaultProps = {
+  currentTrack: {},
+  playStatus: Sound.status.STOPPED,
+};
+
 AudioPlayer.propTypes = {
+  playStatus: PropTypes.string,
+  currentTrack: CONSTANTS.sharedPropTypes.trackEntry,
+
   setPlaylist: PropTypes.func.isRequired,
+  setTrackIndex: PropTypes.func.isRequired,
+  setPlayStatus: PropTypes.func.isRequired,
+
   playlist: PropTypes.arrayOf(
     CONSTANTS.sharedPropTypes.playlistEntry.isRequired,
   ).isRequired,
+
   catalog: PropTypes.objectOf(
     CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
   ).isRequired,

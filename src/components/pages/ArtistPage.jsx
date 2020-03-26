@@ -18,7 +18,7 @@ import AlbumPage from './AlbumPage';
 import AlbumCard from '../AlbumCard';
 
 function ArtistPage(props) {
-  const { catalog, setPlaylist } = props;
+  const { catalog, setPlaylist, setTrackIndex } = props;
   const { artistSlug } = useParams();
   const { path } = useRouteMatch();
 
@@ -48,7 +48,11 @@ function ArtistPage(props) {
       <Route
         path={`${path}/:albumSlug`}
         render={() => (
-          <AlbumPage artist={artist} setPlaylist={setPlaylist} />
+          <AlbumPage
+            artist={artist}
+            setPlaylist={setPlaylist}
+            setTrackIndex={setTrackIndex}
+          />
         )}
       />
     </Switch>
@@ -57,6 +61,8 @@ function ArtistPage(props) {
 
 ArtistPage.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
+  setTrackIndex: PropTypes.func.isRequired,
+
   catalog: PropTypes.objectOf(
     CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
   ).isRequired,

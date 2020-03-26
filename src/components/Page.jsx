@@ -13,7 +13,7 @@ import UpdatesPage from './pages/UpdatesPage';
 import ContributionsPage from './pages/ContributionsPage';
 
 function Page(props) {
-  const { catalog, setPlaylist } = props;
+  const { catalog, setPlaylist, setTrackIndex } = props;
 
   return (
     <div className="Page">
@@ -26,7 +26,11 @@ function Page(props) {
         <Route
           path="/artist/:artistSlug"
           render={() => (
-            <ArtistPage catalog={catalog} setPlaylist={setPlaylist} />
+            <ArtistPage
+              catalog={catalog}
+              setPlaylist={setPlaylist}
+              setTrackIndex={setTrackIndex}
+            />
           )}
         />
       </Switch>
@@ -36,6 +40,8 @@ function Page(props) {
 
 Page.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
+  setTrackIndex: PropTypes.func.isRequired,
+
   catalog: PropTypes.objectOf(
     CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
   ).isRequired,

@@ -10,7 +10,7 @@ import '../Page.css';
 import TrackList from '../TrackList';
 
 function AlbumPage(props) {
-  const { artist, setPlaylist } = props;
+  const { artist, setPlaylist, setTrackIndex } = props;
   const { artistSlug, albumSlug } = useParams();
 
   const album = artist.albums[albumSlug];
@@ -21,7 +21,8 @@ function AlbumPage(props) {
   );
 
   const handleAudioControlButtonClick = (trackIndex) => {
-    setPlaylist(playlist.slice(trackIndex));
+    setPlaylist(playlist);
+    setTrackIndex(trackIndex);
   };
 
   return (
@@ -45,6 +46,7 @@ function AlbumPage(props) {
 
 AlbumPage.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
+  setTrackIndex: PropTypes.func.isRequired,
   artist: CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
 };
 

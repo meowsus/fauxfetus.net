@@ -47,3 +47,15 @@ export function makeAlbumsFromArtist(artist) {
       .map(([k, v]) => ({ ...v, slug: k }))
   );
 }
+
+// TODO this doesn't seem necessary. Smash into scraper script?
+export function makePlaylistTrackFromPlaylist(playlist, index) {
+  const { filePath } = playlist[index];
+  const fileUrl = filePath.replace(/^public/, process.env.PUBLIC_URL);
+
+  return {
+    ...playlist[index],
+    index,
+    fileUrl,
+  };
+}
