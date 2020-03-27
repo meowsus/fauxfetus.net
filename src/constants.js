@@ -46,16 +46,16 @@ const CONSTANTS = {
     }),
 
     trackEntry: PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      filePath: PropTypes.string.isRequired,
+      slug: PropTypes.string,
+      title: PropTypes.string,
+      filePath: PropTypes.string,
       extra: PropTypes.shape({
-        bitrate: PropTypes.number.isRequired,
-        duration: PropTypes.number.isRequired,
-        sampleRate: PropTypes.number.isRequired,
-        trackNumber: PropTypes.number.isRequired,
-        codecProfile: PropTypes.string.isRequired,
-      }).isRequired,
+        bitrate: PropTypes.number,
+        duration: PropTypes.number,
+        sampleRate: PropTypes.number,
+        trackNumber: PropTypes.number,
+        codecProfile: PropTypes.string,
+      }),
     }),
   },
 };

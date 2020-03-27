@@ -121,13 +121,12 @@ function AudioPlayer(props) {
 
 AudioPlayer.defaultProps = {
   currentTrack: {},
-  playStatus: Sound.status.STOPPED,
 };
 
 AudioPlayer.propTypes = {
-  playStatus: PropTypes.string,
   currentTrack: CONSTANTS.sharedPropTypes.trackEntry,
 
+  playStatus: PropTypes.string.isRequired,
   setPlaylist: PropTypes.func.isRequired,
   setTrackIndex: PropTypes.func.isRequired,
   setPlayStatus: PropTypes.func.isRequired,

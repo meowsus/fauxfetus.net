@@ -12,7 +12,7 @@ import Page from './Page';
 
 const useAudioPlayer = () => {
   const [playlist, setPlaylist] = useState([]);
-  const [playStatus, setPlayStatus] = useState(null);
+  const [playStatus, setPlayStatus] = useState(Sound.status.STOPPED);
   const [trackIndex, setTrackIndex] = useState(null);
   const [currentTrack, setCurrentTrack] = useState({});
 
