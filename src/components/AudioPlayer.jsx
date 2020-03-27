@@ -35,11 +35,11 @@ function AudioPlayer(props) {
   } = props;
 
   const getPreviousTrackIndex = () => (
-    (trackIndex - 1 < 0) ? 0 : trackIndex.index - 1
+    (trackIndex - 1 < 0) ? 0 : trackIndex - 1
   );
 
   const getNextTrackIndex = () => (
-    (trackIndex + 1 >= playlist.length) ? playlist.length : trackIndex + 1
+    (trackIndex + 1 >= playlist.length) ? playlist.length - 1 : trackIndex + 1
   );
 
   const handleRandomButtonClick = () => {
@@ -67,6 +67,11 @@ function AudioPlayer(props) {
 
   const handleNextButtonClick = () => {
     setTrackIndex(getNextTrackIndex());
+  };
+
+  const handleFinishedPlaying = () => {
+    if (trackIndex === playlist.length - 1) setPlayStatus(Sound.status.STOPPED);
+    else handleNextButtonClick();
   };
 
   return (
@@ -112,7 +117,7 @@ function AudioPlayer(props) {
         <Sound
           url={trackUrl || ''}
           playStatus={playStatus}
-          onFinishedPlaying={handleNextButtonClick}
+          onFinishedPlaying={handleFinishedPlaying}
         />
       )}
     </div>
