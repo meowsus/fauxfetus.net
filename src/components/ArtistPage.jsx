@@ -8,14 +8,14 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 
-import CONSTANTS from '../../constants';
-import { makeAlbumsFromArtist } from '../../transformers';
+import CONSTANTS from '../constants';
+import { makeAlbumsFromArtist } from '../transformers';
 
-import '../Page.css';
+import './Page.css';
 import './ArtistPage.css';
 
 import AlbumPage from './AlbumPage';
-import AlbumCard from '../AlbumCard';
+import AlbumCard from './AlbumCard';
 
 function ArtistPage(props) {
   const { catalog, setPlaylist, setTrackIndex } = props;

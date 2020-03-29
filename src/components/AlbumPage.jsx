@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import CONSTANTS from '../../constants';
-import { makePlaylistFromAlbumTracks } from '../../transformers';
+import CONSTANTS from '../constants';
+import { makePlaylistFromAlbumTracks } from '../transformers';
 
-import '../Page.css';
+import './Page.css';
 
-import TrackList from '../TrackList';
+import TrackList from './TrackList';
 
 function AlbumPage(props) {
   const { artist, setPlaylist, setTrackIndex } = props;
