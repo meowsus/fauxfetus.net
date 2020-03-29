@@ -21,7 +21,7 @@ function ContentPage(props) {
       .then((text) => setContent(text));
 
     return () => {};
-  }, []);
+  }, [page]);
 
   return <ReactMarkdown source={content} />;
 }
