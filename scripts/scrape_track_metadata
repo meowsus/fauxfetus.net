@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * Metadata dumped in the following format from `parseFile`:
  *

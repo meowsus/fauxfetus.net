@@ -28,11 +28,13 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "scrape": "node scripts/scrape_track_metadata.js",
-    "deploy": "yarn build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete --exclude='audio/'",
-    "deploy-audio": "yarn scrape && yarn build && rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete",
+    "lint": "yarn eslint src/**/*.js",
+    "scrape-audio": "scripts/scrape_track_metadata",
     "download-audio": "rsync -avzh meowsus@fauxfetus.net:fauxfetus.net/audio/ ./public/audio/ --delete",
-    "lint": "yarn eslint src/**/*.js"
+    "upload-build": "rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete --exclude='audio/'",
+    "upload-build-and-audio": "rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete",
+    "deploy": "yarn build && yarn upload-build",
+    "deploy-with-audio": "yarn scrape && yarn upload-build-and-audio"
   },
   "eslintConfig": {
     "extends": "react-app"
