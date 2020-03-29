@@ -8,6 +8,7 @@
     "handlebars": "^4.5.3",
     "lodash.isempty": "^4.4.0",
     "lodash.shuffle": "^4.2.0",
+    "minimist": "^1.2.2",
     "music-metadata": "~6.3.7",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
