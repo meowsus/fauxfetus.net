@@ -8,7 +8,7 @@
     "handlebars": "^4.5.3",
     "lodash.isempty": "^4.4.0",
     "lodash.shuffle": "^4.2.0",
-    "music-metadata": "^4.8.4",
+    "music-metadata": "~6.3.7",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
@@ -34,7 +34,7 @@
     "upload-build": "rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete --exclude='audio/'",
     "upload-build-and-audio": "rsync -avzh build/ meowsus@fauxfetus.net:fauxfetus.net/ --delete",
     "deploy": "yarn build && yarn upload-build",
-    "deploy-with-audio": "yarn scrape && yarn upload-build-and-audio"
+    "deploy-with-audio": "yarn scrape-audio && yarn upload-build-and-audio"
   },
   "eslintConfig": {
     "extends": "react-app"
