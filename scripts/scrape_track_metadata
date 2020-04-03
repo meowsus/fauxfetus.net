@@ -164,6 +164,14 @@ class ID3Scraper {
     });
   }
 
+  sortTracks(metadata) {
+    const { artistSlug, albumSlug } = metadata;
+
+    this.data[artistSlug].albums[albumSlug].tracks.sort((a, b) => (
+      a.extra.trackNumber - b.extra.trackNumber
+    ));
+  }
+
   saveCatalogFile() {
     fs.writeFileSync(this.saveFiles.catalog, JSON.stringify(this.data));
   }
@@ -174,6 +182,7 @@ class ID3Scraper {
         this.storeArtist(metadata);
         this.storeAlbum(metadata);
         this.storeTrack(metadata);
+        this.sortTracks(metadata);
       });
 
       this.saveCatalogFile();
