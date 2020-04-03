@@ -31,7 +31,7 @@ ContentPage.propTypes = {
 };
 
 function Page(props) {
-  const { catalog, setPlaylist, setTrackIndex } = props;
+  const { catalog, setPlaylist, setTrackIndex, currentFilePath } = props;
 
   return (
     <div className="Page">
@@ -51,6 +51,7 @@ function Page(props) {
               catalog={catalog}
               setPlaylist={setPlaylist}
               setTrackIndex={setTrackIndex}
+              currentFilePath={currentFilePath}
             />
           )}
         />
@@ -59,7 +60,13 @@ function Page(props) {
   );
 }
 
+Page.defaultProps = {
+  currentFilePath: '',
+};
+
 Page.propTypes = {
+  currentFilePath: PropTypes.string,
+
   setPlaylist: PropTypes.func.isRequired,
   setTrackIndex: PropTypes.func.isRequired,
 

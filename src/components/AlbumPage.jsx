@@ -10,7 +10,7 @@ import './Page.css';
 import TrackList from './TrackList';
 
 function AlbumPage(props) {
-  const { artist, setPlaylist, setTrackIndex } = props;
+  const { artist, setPlaylist, setTrackIndex, currentFilePath } = props;
   const { artistSlug, albumSlug } = useParams();
 
   const album = artist.albums[albumSlug];
@@ -38,13 +38,20 @@ function AlbumPage(props) {
 
       <TrackList
         tracks={album.tracks}
+        currentFilePath={currentFilePath}
         onAudioControlButtonClick={handleAudioControlButtonClick}
       />
     </section>
   );
 }
 
+AlbumPage.defaultProps = {
+  currentFilePath: '',
+};
+
 AlbumPage.propTypes = {
+  currentFilePath: PropTypes.string,
+
   setPlaylist: PropTypes.func.isRequired,
   setTrackIndex: PropTypes.func.isRequired,
   artist: CONSTANTS.sharedPropTypes.catalogEntry.isRequired,

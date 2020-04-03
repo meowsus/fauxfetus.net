@@ -30,7 +30,17 @@ const displayQuality = (extra) => {
 };
 
 function TrackList(props) {
-  const { tracks, onAudioControlButtonClick } = props;
+  const { tracks, currentFilePath, onAudioControlButtonClick } = props;
+
+  const trackListItemClassName = (filePath) => {
+    const className = ['TrackList-item'];
+
+    if (filePath === currentFilePath) {
+      className.push('TrackList-item--active');
+    }
+
+    return className.join(' ');
+  };
 
   return (
     <ol className="TrackList">
@@ -42,7 +52,10 @@ function TrackList(props) {
         <span className="align-right">Length</span>
       </li>
       {tracks.map((track, trackIndex) => (
-        <li key={track.filePath} className="TrackList-item">
+        <li
+          key={track.filePath}
+          className={trackListItemClassName(track.filePath)}
+        >
           <span>
             <AudioControlButton
               type="play"
@@ -61,7 +74,13 @@ function TrackList(props) {
   );
 }
 
+TrackList.defaultProps = {
+  currentFilePath: '',
+}
+
 TrackList.propTypes = {
+  currentFilePath: PropTypes.string,
+
   onAudioControlButtonClick: PropTypes.func.isRequired,
 
   tracks: PropTypes.arrayOf(

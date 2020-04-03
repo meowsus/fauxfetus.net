@@ -70,6 +70,7 @@ function App() {
               catalog={catalog}
               setPlaylist={setPlaylist}
               setTrackIndex={setTrackIndex}
+              currentFilePath={currentTrack.filePath}
             />
           </div>
 

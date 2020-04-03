@@ -10,7 +10,19 @@
     display: table-row;
   }
 
+  .TrackList-item--active {
+    font-weight: bold;
+  }
+
   .TrackList-item .AudioControlButton svg {
+    fill: var(--yellow);
+  }
+
+  .TrackList-item--active .AudioControlButton {
+    opacity: 1;
+  }
+
+  .TrackList-item--active .AudioControlButton svg {
     fill: var(--red);
   }
 

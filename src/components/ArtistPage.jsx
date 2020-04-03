@@ -18,7 +18,7 @@ import AlbumPage from './AlbumPage';
 import AlbumCard from './AlbumCard';
 
 function ArtistPage(props) {
-  const { catalog, setPlaylist, setTrackIndex } = props;
+  const { catalog, setPlaylist, setTrackIndex, currentFilePath } = props;
   const { artistSlug } = useParams();
   const { path } = useRouteMatch();
 
@@ -52,6 +52,7 @@ function ArtistPage(props) {
             artist={artist}
             setPlaylist={setPlaylist}
             setTrackIndex={setTrackIndex}
+            currentFilePath={currentFilePath}
           />
         )}
       />
@@ -59,7 +60,13 @@ function ArtistPage(props) {
   );
 }
 
+ArtistPage.defaultProps = {
+  currentFilePath: '',
+};
+
 ArtistPage.propTypes = {
+  currentFilePath: PropTypes.string,
+
   setPlaylist: PropTypes.func.isRequired,
   setTrackIndex: PropTypes.func.isRequired,
 
