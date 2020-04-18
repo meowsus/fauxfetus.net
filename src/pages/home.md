@@ -2,6 +2,10 @@ Welcome to the eldritch world of Faux Fetus. Within these cyclopean tunnels you 
 
 # Changelog
 
+## 04.17.2020 @ 22:03
+
+* Minor usability improvements
+
 ## 04.03.2020 @ 6:39
 
 * Tracks are ensured to be ordered by their track number

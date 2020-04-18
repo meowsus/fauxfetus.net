@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import Sound from 'react-sound'; // TODO just take statuses?
 
 import { makePlaylistTrackFromPlaylist } from '../transformers';
@@ -37,6 +37,16 @@ const useAudioPlayer = () => {
   };
 };
 
+export function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [catalog, setCatalog] = useState({});
@@ -61,6 +71,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {!isLoading && (
         <div className="App">
           <Header catalog={catalog} />

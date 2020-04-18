@@ -31,7 +31,12 @@ ContentPage.propTypes = {
 };
 
 function Page(props) {
-  const { catalog, setPlaylist, setTrackIndex, currentFilePath } = props;
+  const {
+    catalog,
+    setPlaylist,
+    setTrackIndex,
+    currentFilePath,
+  } = props;
 
   return (
     <div className="Page">
