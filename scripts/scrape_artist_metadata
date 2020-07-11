@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'json'
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'pry'
+  gem 'slugify'
+end
+
+# Both repos, `meowsus/fauxfetus.net` and `meowsus/fauxfetus.net-middleman`,
+# must be cloned as children in the same directory. This is intended to be run
+# after the `scrape_track_metadata`.
+#
+# Example:
+# cd ~/some/parent/path
+# hub clone fauxfetus.net
+# hub clone fauxfetus.net-middlman
+# cd fauxfetus.net
+# scripts/scrape_artist_metadata
+class Scraper
+  CATALOG_JSON_PATH = './public/catalog.json'.freeze
+  ARTIST_FILES_PATH = '../fauxfetus.net-middleman/source/artists/*'.freeze
+
+  def initialize
+    @paths = Dir[ARTIST_FILES_PATH]
+    @content = @paths.map { |path| IO.read(path) }
+    @yaml = parse_yaml
+    @json = JSON.parse(IO.read(CATALOG_JSON_PATH))
+  end
+
+  def run!
+    errors = []
+
+    catalog = @json.each_with_object({}) do |(key, value), memo|
+      entry = @yaml.select { |e| e['slug'] == key }.first
+
+      if entry.nil?
+        errors << "Issue with `#{key}`"
+        next
+      end
+
+      memo[key] = value.merge(
+        'members' => entry['tags'],
+        'joined_on' => entry['date']
+      )
+    end
+
+    raise StandardError if errors.any?
+
+    IO.write(CATALOG_JSON_PATH, catalog.to_json, mode: 'w')
+  rescue StandardError
+    puts 'Aborting due to errors:'
+    puts errors
+
+    binding.pry
+  end
+
+  private
+
+  def parse_yaml
+    @content.map do |file|
+      data = YAML.safe_load(file.split('---')[1])
+      data['tags'] = data['tags'].split(', ')
+      data['slug'] = data['title'].slugify
+      data
+    end
+  end
+end
+
+Scraper.new.run!
