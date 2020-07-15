@@ -13,22 +13,14 @@ function AudioControlButton(props) {
   const { type, isPlaying, onClick } = props;
 
   const buttonTypes = {
-    play: isPlaying ? (
-      <PauseButton title="Pause audio" />
-    ) : (
-      <PlayButton title="Play audio" />
-    ),
+    play: isPlaying ? <PauseButton title="Pause audio" /> : <PlayButton title="Play audio" />,
     random: <RandomButton title="Play the Faux Fetus catalog, shuffled" />,
     previous: <PreviousButton title="Play previous track" />,
     next: <NextButton title="Play next track" />,
   };
 
   return (
-    <button
-      type="button"
-      className={`AudioControlButton AudioControlButton--${type}`}
-      onClick={onClick}
-    >
+    <button type="button" className={`AudioControlButton AudioControlButton--${type}`} onClick={onClick}>
       {buttonTypes[type]}
     </button>
   );

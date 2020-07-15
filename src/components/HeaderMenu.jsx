@@ -14,14 +14,8 @@ function HeaderMenu(props) {
     <ul className="HeaderMenu">
       {makeArtistsFromCatalog(catalog).map((artist) => (
         <li className="HeaderMenu-item" key={artist.slug}>
-          <Link
-            onClick={onLinkClick}
-            className="HeaderMenu-link"
-            to={`/artist/${artist.slug}`}
-          >
-            <span className="HeaderMenu-first-char">
-              {artist.name.charAt(0)}
-            </span>
+          <Link onClick={onLinkClick} className="HeaderMenu-link" to={`/artist/${artist.slug}`}>
+            <span className="HeaderMenu-first-char">{artist.name.charAt(0)}</span>
             {artist.name.substring(1)}
           </Link>
         </li>
@@ -32,9 +26,7 @@ function HeaderMenu(props) {
 
 HeaderMenu.propTypes = {
   onLinkClick: PropTypes.func.isRequired,
-  catalog: PropTypes.objectOf(
-    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
-  ).isRequired,
+  catalog: PropTypes.objectOf(CONSTANTS.sharedPropTypes.catalogEntry.isRequired).isRequired,
 };
 
 export default HeaderMenu;

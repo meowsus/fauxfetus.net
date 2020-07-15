@@ -10,26 +10,12 @@ function HeaderButton(props) {
   const { type, onClick } = props;
 
   const buttonIcon = {
-    menu: (
-      <MenuIcon
-        className="HeaderButton-icon HeaderButton-icon--menu"
-        title="Main Menu Icon"
-      />
-    ),
-    contact: (
-      <ContactIcon
-        className="HeaderButton-icon HeaderButton-icon--contact"
-        title="Contact Icon"
-      />
-    ),
+    menu: <MenuIcon className="HeaderButton-icon HeaderButton-icon--menu" title="Main Menu Icon" />,
+    contact: <ContactIcon className="HeaderButton-icon HeaderButton-icon--contact" title="Contact Icon" />,
   };
 
   return (
-    <button
-      type="button"
-      onClick={(event) => onClick(event)}
-      className="HeaderButton"
-    >
+    <button type="button" onClick={(event) => onClick(event)} className="HeaderButton">
       {buttonIcon[type]}
     </button>
   );

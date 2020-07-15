@@ -31,23 +31,12 @@ ContentPage.propTypes = {
 };
 
 function Page(props) {
-  const {
-    catalog,
-    setPlaylist,
-    setTrackIndex,
-    currentFilePath,
-  } = props;
+  const { catalog, setPlaylist, setTrackIndex, currentFilePath } = props;
 
   return (
     <div className="Page">
       <Switch>
-        <Route
-          exact
-          path="/"
-          render={() => (
-            <ContentPage page={HomePage} />
-          )}
-        />
+        <Route exact path="/" render={() => <ContentPage page={HomePage} />} />
 
         <Route
           path="/artist/:artistSlug"
@@ -75,9 +64,7 @@ Page.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
   setTrackIndex: PropTypes.func.isRequired,
 
-  catalog: PropTypes.objectOf(
-    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
-  ).isRequired,
+  catalog: PropTypes.objectOf(CONSTANTS.sharedPropTypes.catalogEntry.isRequired).isRequired,
 };
 
 export default Page;

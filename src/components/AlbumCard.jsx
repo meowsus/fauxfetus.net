@@ -10,10 +10,7 @@ function AlbumCard(props) {
   const coverArt = album.art[0];
 
   return (
-    <Link
-      className="AlbumCard"
-      to={`/artist/${artistSlug}/${album.slug}`}
-    >
+    <Link className="AlbumCard" to={`/artist/${artistSlug}/${album.slug}`}>
       <h2 className="AlbumCard-title">{album.name}</h2>
       {coverArt && (
         <img
@@ -32,9 +29,7 @@ AlbumCard.propTypes = {
     name: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
-    art: PropTypes.arrayOf(
-      PropTypes.string.isRequired,
-    ).isRequired,
+    art: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     tracks: PropTypes.arrayOf(
       PropTypes.shape({
         slug: PropTypes.string.isRequired,
@@ -53,4 +48,3 @@ AlbumCard.propTypes = {
 };
 
 export default AlbumCard;
-

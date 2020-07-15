@@ -52,22 +52,14 @@ function TrackList(props) {
         <span className="align-right">Length</span>
       </li>
       {tracks.map((track, trackIndex) => (
-        <li
-          key={track.filePath}
-          className={trackListItemClassName(track.filePath)}
-        >
+        <li key={track.filePath} className={trackListItemClassName(track.filePath)}>
           <span>
-            <AudioControlButton
-              type="play"
-              onClick={() => onAudioControlButtonClick(trackIndex)}
-            />
+            <AudioControlButton type="play" onClick={() => onAudioControlButtonClick(trackIndex)} />
           </span>
           <span>{track.title}</span>
           <span className="align-right">{track.extra.trackNumber}</span>
           <span className="align-right">{displayQuality(track.extra)}</span>
-          <span className="align-right">
-            {formatDuration(track.extra.duration)}
-          </span>
+          <span className="align-right">{formatDuration(track.extra.duration)}</span>
         </li>
       ))}
     </ol>
@@ -76,16 +68,14 @@ function TrackList(props) {
 
 TrackList.defaultProps = {
   currentFilePath: '',
-}
+};
 
 TrackList.propTypes = {
   currentFilePath: PropTypes.string,
 
   onAudioControlButtonClick: PropTypes.func.isRequired,
 
-  tracks: PropTypes.arrayOf(
-    CONSTANTS.sharedPropTypes.trackEntry.isRequired,
-  ).isRequired,
+  tracks: PropTypes.arrayOf(CONSTANTS.sharedPropTypes.trackEntry.isRequired).isRequired,
 };
 
 export default TrackList;

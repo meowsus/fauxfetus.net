@@ -51,17 +51,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [catalog, setCatalog] = useState({});
 
-  const {
-    playlist,
-    playStatus,
-    setPlaylist,
-    currentTrack,
-    setTrackIndex,
-    setPlayStatus,
-  } = useAudioPlayer();
+  const { playlist, playStatus, setPlaylist, currentTrack, setTrackIndex, setPlayStatus } = useAudioPlayer();
 
   useEffect(() => {
-    if (!isLoading) { return; }
+    if (!isLoading) {
+      return;
+    }
 
     fetch(`${process.env.PUBLIC_URL}/catalog.json`)
       .then((response) => response.json())

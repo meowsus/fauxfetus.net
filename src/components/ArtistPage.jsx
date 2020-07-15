@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  Route,
-  Switch,
-  useParams,
-  useRouteMatch,
-} from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 
 import CONSTANTS from '../constants';
 import { makeAlbumsFromArtist } from '../transformers';
@@ -33,23 +28,13 @@ function ArtistPage(props) {
           </div>
 
           <div className="ArtistPage-info">
-            Joined on
-            {' '}
-            {artist.joined_on}
-            &nbsp;|
-            Members:
-            {' '}
-            {artist.members.join(' ')}
+            Joined on {artist.joined_on}
+            &nbsp;| Members: {artist.members.join(' ')}
           </div>
 
           <div className="ArtistPage-albums">
             {makeAlbumsFromArtist(artist).map((album) => (
-              <AlbumCard
-                grid
-                key={album.path}
-                album={album}
-                artistSlug={artistSlug}
-              />
+              <AlbumCard grid key={album.path} album={album} artistSlug={artistSlug} />
             ))}
           </div>
         </div>
@@ -80,9 +65,7 @@ ArtistPage.propTypes = {
   setPlaylist: PropTypes.func.isRequired,
   setTrackIndex: PropTypes.func.isRequired,
 
-  catalog: PropTypes.objectOf(
-    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
-  ).isRequired,
+  catalog: PropTypes.objectOf(CONSTANTS.sharedPropTypes.catalogEntry.isRequired).isRequired,
 };
 
 export default ArtistPage;

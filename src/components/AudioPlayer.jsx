@@ -34,13 +34,9 @@ function AudioPlayer(props) {
     setPlayStatus,
   } = props;
 
-  const getPreviousTrackIndex = () => (
-    (trackIndex - 1 < 0) ? 0 : trackIndex - 1
-  );
+  const getPreviousTrackIndex = () => (trackIndex - 1 < 0 ? 0 : trackIndex - 1);
 
-  const getNextTrackIndex = () => (
-    (trackIndex + 1 >= playlist.length) ? playlist.length - 1 : trackIndex + 1
-  );
+  const getNextTrackIndex = () => (trackIndex + 1 >= playlist.length ? playlist.length - 1 : trackIndex + 1);
 
   const handleRandomButtonClick = () => {
     const catalogPlaylist = makePlaylistFromCatalog(catalog);
@@ -77,10 +73,7 @@ function AudioPlayer(props) {
   return (
     <div className="AudioPlayer">
       <div className="AudioPlayer-layout">
-        <AudioControlButton
-          type="random"
-          onClick={handleRandomButtonClick}
-        />
+        <AudioControlButton type="random" onClick={handleRandomButtonClick} />
 
         <AudioControlButton
           type="play"
@@ -102,24 +95,12 @@ function AudioPlayer(props) {
           )}
         </div>
 
-        <AudioControlButton
-          type="previous"
-          onClick={handlePreviousButtonClick}
-        />
+        <AudioControlButton type="previous" onClick={handlePreviousButtonClick} />
 
-        <AudioControlButton
-          type="next"
-          onClick={handleNextButtonClick}
-        />
+        <AudioControlButton type="next" onClick={handleNextButtonClick} />
       </div>
 
-      {currentTrack && (
-        <Sound
-          url={trackUrl || ''}
-          playStatus={playStatus}
-          onFinishedPlaying={handleFinishedPlaying}
-        />
-      )}
+      {currentTrack && <Sound url={trackUrl || ''} playStatus={playStatus} onFinishedPlaying={handleFinishedPlaying} />}
     </div>
   );
 }
@@ -136,13 +117,9 @@ AudioPlayer.propTypes = {
   setTrackIndex: PropTypes.func.isRequired,
   setPlayStatus: PropTypes.func.isRequired,
 
-  playlist: PropTypes.arrayOf(
-    CONSTANTS.sharedPropTypes.playlistEntry.isRequired,
-  ).isRequired,
+  playlist: PropTypes.arrayOf(CONSTANTS.sharedPropTypes.playlistEntry.isRequired).isRequired,
 
-  catalog: PropTypes.objectOf(
-    CONSTANTS.sharedPropTypes.catalogEntry.isRequired,
-  ).isRequired,
+  catalog: PropTypes.objectOf(CONSTANTS.sharedPropTypes.catalogEntry.isRequired).isRequired,
 };
 
 export default AudioPlayer;

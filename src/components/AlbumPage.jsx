@@ -29,9 +29,7 @@ function AlbumPage(props) {
     <section className="AlbumPage">
       <div className="Page-head">
         <h1>
-          <Link to={`/artist/${artistSlug}`}>
-            {artist.name}
-          </Link>
+          <Link to={`/artist/${artistSlug}`}>{artist.name}</Link>
         </h1>
         <h2>{album.name}</h2>
       </div>
