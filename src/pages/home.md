@@ -2,6 +2,10 @@ Welcome to the eldritch world of Faux Fetus. Within these cyclopean tunnels you 
 
 # Changelog
 
+## 07.14.2020 @ 20:06
+
+* Add Release Date and Members to Artist pages
+
 ## 04.17.2020 @ 22:03
 
 * Minor usability improvements
