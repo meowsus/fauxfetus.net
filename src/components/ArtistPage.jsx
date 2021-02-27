@@ -27,10 +27,12 @@ function ArtistPage(props) {
             <h1>{artist.name}</h1>
           </div>
 
-          <div className="ArtistPage-info">
-            Joined on {artist.joined_on}
-            &nbsp;| Members: {artist.members.join(' ')}
-          </div>
+          {artist.joined_on && artist.members && (
+            <div className="ArtistPage-info">
+              Joined on {artist.joined_on}
+              &nbsp;| Members: {artist.members.join(' ')}
+            </div>
+          )}
 
           <div className="ArtistPage-albums">
             {makeAlbumsFromArtist(artist).map((album) => (
