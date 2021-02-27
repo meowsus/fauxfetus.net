@@ -2,6 +2,10 @@ Welcome to the eldritch world of Faux Fetus. Within these cyclopean tunnels you 
 
 # Changelog
 
+## 02.27.2021 @ 07:23
+
+* Add Nuclear Family Holocaust
+
 ## 07.14.2020 @ 20:06
 
 * Add Release Date and Members to Artist pages
