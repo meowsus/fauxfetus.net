@@ -9,5 +9,5 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rbg(var(--background-rgb))
+  background: rbg(var(--background-rgb));
 }
