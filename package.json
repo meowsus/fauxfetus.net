@@ -2,16 +2,18 @@
   "name": "fauxfetus.net",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier . --write",
-    "scripts:generate-json": "node --loader ts-node/esm scripts/generate-json.mts"
+    "scripts:generate-json": "node --loader ts-node/esm scripts/generate-json.ts"
   },
   "dependencies": {
     "next": "14.2.6",
+    "node-id3": "^0.2.6",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -19,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "concurrently": "^8.2.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
     "eslint-config-prettier": "^9.1.0",
