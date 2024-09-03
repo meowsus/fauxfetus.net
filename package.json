@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier . --write",
-    "scripts:generate-json": "ts-node scripts/generate-json.ts"
+    "scripts:generate-json": "node --loader ts-node/esm scripts/generate-json.mts"
   },
   "dependencies": {
     "next": "14.2.6",

@@ -1,3 +1,5 @@
+import { existsSync, rmSync } from "fs";
+
 /**
  * pnpm run scripts:generate-json FROM_DIR TO_DIR
  *
@@ -17,6 +19,8 @@
  * |---- some_track.mp3
  *
  * TO_DIR:
+ * | catalog.json
+ * | some_band.json
  * | some_band/
  * |-- some_album.json
  * |-- some_album/
@@ -26,7 +30,7 @@
 const USAGE = `
 Usage: 
 
-  pnpm run generate:tracks FROM_DIR TO_DIR
+  pnpm run scripts:generate-json FROM_DIR TO_DIR
 
 Arguments:
 
@@ -34,10 +38,50 @@ Arguments:
   TO_DIR   - the directory to mimic in JSON files
 `;
 
-const fromDir = process.argv[2];
-const toDir = process.argv[3];
+class Args {
+  fromDir: string;
 
-if (!fromDir || !toDir) {
-  console.log(USAGE);
-  process.exit(1);
+  toDir: string;
+
+  constructor() {
+    const fromDir = process.argv[2];
+    const toDir = process.argv[3];
+
+    if (!fromDir || !toDir) {
+      console.error(USAGE);
+      process.exit(1);
+    }
+
+    this.fromDir = fromDir;
+    this.toDir = toDir;
+  }
 }
+
+class Dir {
+  args: Args;
+
+  constructor(args: Args) {
+    if (!existsSync(args.fromDir)) {
+      console.error("FROM_DIR does not exist");
+      process.exit(2);
+    }
+
+    if (!existsSync(args.toDir)) {
+      console.error("TO_DIR does not exist");
+      process.exit(2);
+    }
+
+    this.args = args;
+  }
+
+  deleteToDirectory() {
+    rmSync(this.args.toDir, { recursive: true, force: true });
+  }
+}
+
+(() => {
+  const args = new Args();
+
+  const dir = new Dir(args);
+  dir.deleteToDirectory();
+})();
