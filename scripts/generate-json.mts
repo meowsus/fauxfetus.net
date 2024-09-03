@@ -1,4 +1,5 @@
-import { existsSync, rmSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from "fs";
+import { join } from "path";
 
 /**
  * pnpm run scripts:generate-json FROM_DIR TO_DIR
@@ -66,16 +67,41 @@ class Dir {
       process.exit(2);
     }
 
-    if (!existsSync(args.toDir)) {
-      console.error("TO_DIR does not exist");
-      process.exit(2);
-    }
-
     this.args = args;
   }
 
+  private createDirectoryStructure(fromDir: string, toDir: string) {
+    const items = readdirSync(fromDir);
+
+    for (const item of items) {
+      const fromPath = join(fromDir, item);
+      const toPath = join(toDir, item);
+
+      if (statSync(fromPath).isDirectory()) {
+        mkdirSync(toPath, { recursive: true });
+        this.createDirectoryStructure(fromPath, toPath);
+      }
+    }
+  }
+
   deleteToDirectory() {
+    console.log(`Deleting ${this.args.toDir}...`);
+
     rmSync(this.args.toDir, { recursive: true, force: true });
+  }
+
+  createToDirectory() {
+    console.log(`Creating ${this.args.toDir}...`);
+
+    mkdirSync(this.args.toDir);
+  }
+
+  buildToDirectory() {
+    console.log(
+      `Copying structure of ${this.args.fromDir} to ${this.args.toDir}`,
+    );
+
+    this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
   }
 }
 
@@ -84,4 +110,6 @@ class Dir {
 
   const dir = new Dir(args);
   dir.deleteToDirectory();
+  dir.createToDirectory();
+  dir.buildToDirectory();
 })();
