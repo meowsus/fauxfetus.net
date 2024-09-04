@@ -1,15 +1,7 @@
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-  statSync,
-  writeFileSync,
-} from "fs";
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from "fs";
 import { join } from "path";
 import { parseBuffer } from "music-metadata";
-import { readdir, readFile, stat, writeFile } from "fs/promises";
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
 
 /**
  * pnpm run scripts:generate-json FROM_DIR TO_DIR
@@ -80,38 +72,38 @@ class Dir {
     this.args = args;
   }
 
-  private createDirectoryStructure(fromDir: string, toDir: string) {
-    const items = readdirSync(fromDir);
+  private async createDirectoryStructure(fromDir: string, toDir: string) {
+    const items = await readdir(fromDir);
 
     for (const item of items) {
       const fromPath = join(fromDir, item);
       const toPath = join(toDir, item);
 
-      if (statSync(fromPath).isDirectory()) {
-        mkdirSync(toPath, { recursive: true });
-        this.createDirectoryStructure(fromPath, toPath);
+      if ((await stat(fromPath)).isDirectory()) {
+        await mkdir(toPath, { recursive: true });
+        await this.createDirectoryStructure(fromPath, toPath);
       }
     }
   }
 
-  deleteToDirectory() {
+  async deleteToDirectory() {
     console.log(`Deleting ${this.args.toDir}...`);
 
-    rmSync(this.args.toDir, { recursive: true, force: true });
+    await rm(this.args.toDir, { recursive: true, force: true });
   }
 
-  createToDirectory() {
+  async createToDirectory() {
     console.log(`Creating ${this.args.toDir}...`);
 
-    mkdirSync(this.args.toDir);
+    await mkdir(this.args.toDir);
   }
 
-  buildToDirectory() {
+  async buildToDirectory() {
     console.log(
       `Copying structure of ${this.args.fromDir} to ${this.args.toDir}`,
     );
 
-    this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
+    await this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
   }
 }
 
@@ -177,9 +169,9 @@ class Json {
   const args = new Args();
 
   const dir = new Dir(args);
-  dir.deleteToDirectory();
-  dir.createToDirectory();
-  dir.buildToDirectory();
+  await dir.deleteToDirectory();
+  await dir.createToDirectory();
+  await dir.buildToDirectory();
 
   const json = new Json(args);
   await json.generateTrackJson();
