@@ -2,12 +2,14 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   rmSync,
   statSync,
   writeFileSync,
 } from "fs";
-import NodeID3 from "node-id3";
 import { join } from "path";
+import { parseBuffer } from "music-metadata";
+import { readdir, readFile, stat, writeFile } from "fs/promises";
 
 /**
  * pnpm run scripts:generate-json FROM_DIR TO_DIR
@@ -125,27 +127,39 @@ class Json {
     this.args = args;
   }
 
-  private processMp3File(fromPath: string, toPath: string) {
-    const metadata = NodeID3.read(fromPath);
-    const metadataJson = JSON.stringify(metadata);
+  private async processMp3File(fromPath: string, toPath: string) {
+    const buffer = await readFile(fromPath);
 
-    writeFileSync(toPath, metadataJson);
-    console.log(`Saved metadata for ${fromPath} to ${toPath}...`);
+    const fromPathRelative = fromPath.replace(this.args.fromDir, "");
+    const toPathRelative = toPath.replace(this.args.toDir, "");
+
+    try {
+      console.log(`Try processing from: ${fromPathRelative}...`);
+
+      const metadata = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
+      const metadataJson = JSON.stringify(metadata);
+      await writeFile(toPath, metadataJson);
+
+      console.log(`Saved metadata to:   ${toPathRelative}...`);
+    } catch (error) {
+      console.error(error);
+      process.exit(3);
+    }
   }
 
-  private scanDirectory(fromDir: string, toDir: string) {
-    const items = readdirSync(fromDir);
+  private async scanDirectory(fromDir: string, toDir: string) {
+    const items = await readdir(fromDir);
 
     for (const item of items) {
       const fromPath = join(fromDir, item);
       const toPath = join(toDir, item);
 
-      if (statSync(fromPath).isDirectory()) {
+      if ((await stat(fromPath)).isDirectory()) {
         // Recursively process directories
         this.scanDirectory(fromPath, toPath);
       } else if (item.endsWith(".mp3")) {
         // Process MP3 files
-        this.processMp3File(fromPath, toPath.replace(".mp3", ".json"));
+        await this.processMp3File(fromPath, toPath.replace(".mp3", ".json"));
       }
     }
   }
@@ -155,11 +169,11 @@ class Json {
       `Scanning ${this.args.fromDir} and generating JSON in ${this.args.toDir}...`,
     );
 
-    this.scanDirectory(this.args.fromDir, this.args.toDir);
+    await this.scanDirectory(this.args.fromDir, this.args.toDir);
   }
 }
 
-(() => {
+(async () => {
   const args = new Args();
 
   const dir = new Dir(args);
@@ -168,5 +182,5 @@ class Json {
   dir.buildToDirectory();
 
   const json = new Json(args);
-  json.generateJson();
+  await json.generateJson();
 })();
