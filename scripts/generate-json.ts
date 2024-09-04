@@ -164,7 +164,7 @@ class Json {
     }
   }
 
-  async generateJson() {
+  async generateTrackJson() {
     console.log(
       `Scanning ${this.args.fromDir} and generating JSON in ${this.args.toDir}...`,
     );
@@ -182,5 +182,5 @@ class Json {
   dir.buildToDirectory();
 
   const json = new Json(args);
-  await json.generateJson();
+  await json.generateTrackJson();
 })();
