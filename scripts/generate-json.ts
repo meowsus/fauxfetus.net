@@ -105,6 +105,12 @@ class Dir {
 
     await this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
   }
+
+  async perform() {
+    await this.deleteToDirectory();
+    await this.createToDirectory();
+    await this.buildToDirectory();
+  }
 }
 
 class Json {
@@ -163,16 +169,17 @@ class Json {
 
     await this.scanDirectory(this.args.fromDir, this.args.toDir);
   }
+
+  async perform() {
+    await this.generateTrackJson();
+  }
 }
 
 (async () => {
   const args = new Args();
-
   const dir = new Dir(args);
-  await dir.deleteToDirectory();
-  await dir.createToDirectory();
-  await dir.buildToDirectory();
-
   const json = new Json(args);
-  await json.generateTrackJson();
+
+  await dir.perform();
+  await json.perform();
 })();
