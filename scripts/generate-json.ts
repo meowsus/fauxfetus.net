@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from "fs";
+import { existsSync } from "fs";
 import { join } from "path";
-import { parseBuffer } from "music-metadata";
+import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
 
 /**
@@ -116,6 +116,10 @@ class Dir {
 class Json {
   args: Args;
 
+  warnings: {
+    fromMusicMetadata: Record<string, IAudioMetadata["quality"]["warnings"]>;
+  };
+
   constructor(args: Args) {
     if (!existsSync(args.fromDir)) {
       console.error("FROM_DIR does not exist");
@@ -123,6 +127,10 @@ class Json {
     }
 
     this.args = args;
+
+    this.warnings = {
+      fromMusicMetadata: {},
+    };
   }
 
   private async processMp3File(fromPath: string, toPath: string) {
@@ -135,6 +143,11 @@ class Json {
       console.log(`Try processing from: ${fromPathRelative}...`);
 
       const metadata = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
+
+      if (metadata.quality.warnings.length > 0) {
+        this.warnings.fromMusicMetadata[toPath] = metadata.quality.warnings;
+      }
+
       const metadataJson = JSON.stringify(metadata);
       await writeFile(toPath, metadataJson);
 
@@ -170,8 +183,24 @@ class Json {
     await this.scanDirectory(this.args.fromDir, this.args.toDir);
   }
 
+  printWarnings() {
+    const mmWarningEntries = Object.entries(this.warnings.fromMusicMetadata);
+
+    if (mmWarningEntries.length > 0) {
+      console.warn("Music Metadata found some warnings while parsing...");
+
+      mmWarningEntries.forEach(([toPath, warnings]) => {
+        console.log(`In ${toPath}:`);
+        warnings.forEach((warning) => {
+          console.log(`- ${warning}`);
+        });
+      });
+    }
+  }
+
   async perform() {
     await this.generateTrackJson();
+    this.printWarnings();
   }
 }
 
