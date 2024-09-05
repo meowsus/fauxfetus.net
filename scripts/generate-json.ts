@@ -1,7 +1,7 @@
 import { existsSync } from "fs";
-import { join } from "path";
-import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
+import { IAudioMetadata, parseBuffer } from "music-metadata";
+import { join } from "path";
 
 /**
  * pnpm run scripts:generate-json FROM_DIR TO_DIR
@@ -78,6 +78,10 @@ class Dir {
     for (const item of items) {
       const fromPath = join(fromDir, item);
       const toPath = join(toDir, item);
+
+      const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
+
+      if (shouldSkip) continue;
 
       if ((await stat(fromPath)).isDirectory()) {
         await mkdir(toPath, { recursive: true });
@@ -158,16 +162,20 @@ class Json {
     }
   }
 
-  private async scanDirectoryForMp3s(fromDir: string, toDir: string) {
+  private async scanDirectory(fromDir: string, toDir: string) {
     const items = await readdir(fromDir);
 
     for (const item of items) {
       const fromPath = join(fromDir, item);
       const toPath = join(toDir, item);
 
+      const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
+
+      if (shouldSkip) continue;
+
       if ((await stat(fromPath)).isDirectory()) {
         // Recursively process directories
-        this.scanDirectoryForMp3s(fromPath, toPath);
+        this.scanDirectory(fromPath, toPath);
       } else if (item.endsWith(".mp3")) {
         // Process MP3 files
         await this.processMp3File(fromPath, toPath.replace(".mp3", ".json"));
@@ -180,7 +188,7 @@ class Json {
       `Scanning ${this.args.fromDir} and generating JSON in ${this.args.toDir}...`,
     );
 
-    await this.scanDirectoryForMp3s(this.args.fromDir, this.args.toDir);
+    await this.scanDirectory(this.args.fromDir, this.args.toDir);
   }
 
   printWarnings() {
@@ -198,12 +206,9 @@ class Json {
     }
   }
 
-  async generateAlbumJson() {}
-
   async perform() {
     await this.generateTrackJson();
     this.printWarnings();
-    await this.generateAlbumJson();
   }
 }
 
