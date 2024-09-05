@@ -158,7 +158,7 @@ class Json {
     }
   }
 
-  private async scanDirectory(fromDir: string, toDir: string) {
+  private async scanDirectoryForMp3s(fromDir: string, toDir: string) {
     const items = await readdir(fromDir);
 
     for (const item of items) {
@@ -167,7 +167,7 @@ class Json {
 
       if ((await stat(fromPath)).isDirectory()) {
         // Recursively process directories
-        this.scanDirectory(fromPath, toPath);
+        this.scanDirectoryForMp3s(fromPath, toPath);
       } else if (item.endsWith(".mp3")) {
         // Process MP3 files
         await this.processMp3File(fromPath, toPath.replace(".mp3", ".json"));
@@ -180,7 +180,7 @@ class Json {
       `Scanning ${this.args.fromDir} and generating JSON in ${this.args.toDir}...`,
     );
 
-    await this.scanDirectory(this.args.fromDir, this.args.toDir);
+    await this.scanDirectoryForMp3s(this.args.fromDir, this.args.toDir);
   }
 
   printWarnings() {
@@ -198,9 +198,12 @@ class Json {
     }
   }
 
+  async generateAlbumJson() {}
+
   async perform() {
     await this.generateTrackJson();
     this.printWarnings();
+    await this.generateAlbumJson();
   }
 }
 
