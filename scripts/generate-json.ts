@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
+import { mkdir, readdir, readFile, rm, stat } from "fs/promises";
 import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { join } from "path";
 
@@ -72,23 +72,23 @@ class Dir {
     this.args = args;
   }
 
-  private async createDirectoryStructure(fromDir: string, toDir: string) {
-    const items = await readdir(fromDir);
+  // private async createDirectoryStructure(fromDir: string, toDir: string) {
+  //   const items = await readdir(fromDir);
 
-    for (const item of items) {
-      const fromPath = join(fromDir, item);
-      const toPath = join(toDir, item);
+  //   for (const item of items) {
+  //     const fromPath = join(fromDir, item);
+  //     const toPath = join(toDir, item);
 
-      const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
+  //     const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
 
-      if (shouldSkip) continue;
+  //     if (shouldSkip) continue;
 
-      if ((await stat(fromPath)).isDirectory()) {
-        await mkdir(toPath, { recursive: true });
-        await this.createDirectoryStructure(fromPath, toPath);
-      }
-    }
-  }
+  //     if ((await stat(fromPath)).isDirectory()) {
+  //       await mkdir(toPath, { recursive: true });
+  //       await this.createDirectoryStructure(fromPath, toPath);
+  //     }
+  //   }
+  // }
 
   async deleteToDirectory() {
     console.log(`Deleting ${this.args.toDir}...`);
@@ -102,26 +102,28 @@ class Dir {
     await mkdir(this.args.toDir);
   }
 
-  async buildToDirectory() {
-    console.log(
-      `Copying structure of ${this.args.fromDir} to ${this.args.toDir}`,
-    );
+  // async buildToDirectory() {
+  //   console.log(
+  //     `Copying structure of ${this.args.fromDir} to ${this.args.toDir}`,
+  //   );
 
-    await this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
-  }
+  //   await this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
+  // }
 
   async perform() {
     await this.deleteToDirectory();
     await this.createToDirectory();
-    await this.buildToDirectory();
+    // await this.buildToDirectory();
   }
 }
 
 class Json {
   args: Args;
 
-  warnings: {
-    fromMusicMetadata: Record<string, IAudioMetadata["quality"]["warnings"]>;
+  warnings: { [path: string]: string[] };
+
+  organizedTracks: {
+    [artistName: string]: { [albumName: string]: App.Track[] };
   };
 
   constructor(args: Args) {
@@ -131,43 +133,78 @@ class Json {
     }
 
     this.args = args;
-
-    this.warnings = {
-      fromMusicMetadata: {},
-    };
+    this.organizedTracks = {};
+    this.warnings = {};
   }
 
-  private async processMp3File(fromPath: string, toPath: string) {
+  private addWarning(
+    path: string,
+    warning: string | IAudioMetadata["quality"]["warnings"],
+  ) {
+    if (!this.warnings[path]) this.warnings[path] = [];
+
+    if (typeof warning === "string") {
+      this.warnings[path].push(warning);
+    } else {
+      warning.forEach((warning) => this.warnings[path].push(warning.message));
+    }
+  }
+
+  private addOrganizedTrack(
+    artistName: string | undefined,
+    albumName: string | undefined,
+    trackData: App.Track,
+  ) {
+    if (!artistName || !albumName) return;
+
+    if (!this.organizedTracks[artistName])
+      this.organizedTracks[artistName] = {};
+
+    if (!this.organizedTracks[artistName][albumName])
+      this.organizedTracks[artistName][albumName] = [];
+
+    this.organizedTracks[artistName][albumName].push(trackData);
+  }
+
+  private async processMp3File(fromPath: string) {
     const buffer = await readFile(fromPath);
 
-    const fromPathRelative = fromPath.replace(this.args.fromDir, "");
-    const toPathRelative = toPath.replace(this.args.toDir, "");
-
     try {
-      console.log(`Try processing from: ${fromPathRelative}...`);
+      // console.log(`Try processing from: ${fromPath}...`);
 
-      const metadata = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
+      const trackData = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
 
-      if (metadata.quality.warnings.length > 0) {
-        this.warnings.fromMusicMetadata[toPath] = metadata.quality.warnings;
+      const artistName = trackData.common.artist;
+      const albumName = trackData.common.album;
+
+      if (trackData.quality.warnings.length > 0) {
+        this.addWarning(fromPath, trackData.quality.warnings);
       }
 
-      const metadataJson = JSON.stringify(metadata);
-      await writeFile(toPath, metadataJson);
+      if (!artistName || !albumName) {
+        this.addWarning(
+          fromPath,
+          `Artist or album name missing - (Artist: ${artistName}) (Album: ${albumName})`,
+        );
+      }
 
-      console.log(`Saved metadata to:   ${toPathRelative}...`);
+      this.addOrganizedTrack(artistName, albumName, trackData);
+
+      // const metadataJson = JSON.stringify(metadata);
+      // await writeFile(toPath, metadataJson);
+
+      // console.log(`Saved metadata to:   ${toPathRelative}...`);
     } catch (error) {
       console.error(error);
       process.exit(3);
     }
   }
 
-  private async scanDirectory(fromDir: string, toDir: string) {
+  private async scanDirectory(fromDir: string) {
     const items = await readdir(fromDir);
 
     for (const item of items) {
       const fromPath = join(fromDir, item);
-      const toPath = join(toDir, item);
 
       const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
 
@@ -175,30 +212,30 @@ class Json {
 
       if ((await stat(fromPath)).isDirectory()) {
         // Recursively process directories
-        this.scanDirectory(fromPath, toPath);
+        this.scanDirectory(fromPath);
       } else if (item.endsWith(".mp3")) {
         // Process MP3 files
-        await this.processMp3File(fromPath, toPath.replace(".mp3", ".json"));
+        await this.processMp3File(fromPath);
       }
     }
   }
 
-  async generateTrackJson() {
+  async organizeNormalTracks() {
     console.log(
       `Scanning ${this.args.fromDir} and generating JSON in ${this.args.toDir}...`,
     );
 
-    await this.scanDirectory(this.args.fromDir, this.args.toDir);
+    await this.scanDirectory(this.args.fromDir);
   }
 
   printWarnings() {
-    const mmWarningEntries = Object.entries(this.warnings.fromMusicMetadata);
+    const entries = Object.entries(this.warnings);
 
-    if (mmWarningEntries.length > 0) {
-      console.warn("Music Metadata found some warnings while parsing...");
+    if (entries.length > 0) {
+      console.warn("Problems found: ");
 
-      mmWarningEntries.forEach(([toPath, warnings]) => {
-        console.log(`In ${toPath}:`);
+      entries.forEach(([path, warnings]) => {
+        console.log(`In ${path}:`);
         warnings.forEach((warning) => {
           console.log(`- ${warning}`);
         });
@@ -207,8 +244,10 @@ class Json {
   }
 
   async perform() {
-    await this.generateTrackJson();
+    await this.organizeNormalTracks();
     this.printWarnings();
+    console.log(Object.entries(this.organizedTracks).length);
+    // console.log(this.organizedTracks);
   }
 }
 
