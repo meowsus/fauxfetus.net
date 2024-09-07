@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
+import { readdir, readFile, stat } from "fs/promises";
 import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { join } from "path";
 
@@ -33,63 +33,6 @@ class Args {
   }
 }
 
-class Dir {
-  args: Args;
-
-  constructor(args: Args) {
-    if (!existsSync(args.fromDir)) {
-      console.error("FROM_DIR does not exist");
-      process.exit(2);
-    }
-
-    this.args = args;
-  }
-
-  // private async createDirectoryStructure(fromDir: string, toDir: string) {
-  //   const items = await readdir(fromDir);
-
-  //   for (const item of items) {
-  //     const fromPath = join(fromDir, item);
-  //     const toPath = join(toDir, item);
-
-  //     const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
-
-  //     if (shouldSkip) continue;
-
-  //     if ((await stat(fromPath)).isDirectory()) {
-  //       await mkdir(toPath, { recursive: true });
-  //       await this.createDirectoryStructure(fromPath, toPath);
-  //     }
-  //   }
-  // }
-
-  async deleteToDirectory() {
-    console.log(`Deleting ${this.args.toDir}...`);
-
-    await rm(this.args.toDir, { recursive: true, force: true });
-  }
-
-  async createToDirectory() {
-    console.log(`Creating ${this.args.toDir}...`);
-
-    await mkdir(this.args.toDir);
-  }
-
-  // async buildToDirectory() {
-  //   console.log(
-  //     `Copying structure of ${this.args.fromDir} to ${this.args.toDir}`,
-  //   );
-
-  //   await this.createDirectoryStructure(this.args.fromDir, this.args.toDir);
-  // }
-
-  async perform() {
-    await this.deleteToDirectory();
-    await this.createToDirectory();
-    // await this.buildToDirectory();
-  }
-}
-
 class Json {
   args: Args;
 
@@ -106,8 +49,8 @@ class Json {
     }
 
     this.args = args;
-    this.tracksByArtistAndAlbum = {};
     this.warnings = {};
+    this.tracksByArtistAndAlbum = {};
   }
 
   private addWarning(
@@ -142,14 +85,10 @@ class Json {
   private async processMp3File(fromPath: string) {
     const buffer = await readFile(fromPath);
 
-    // console.log(`Try processing from: ${fromPath}...`);
-
     const trackData = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
 
     const artistName = trackData.common.artist;
     const albumName = trackData.common.album;
-
-    console.log(artistName);
 
     if (trackData.quality.warnings.length > 0) {
       this.addWarning(fromPath, trackData.quality.warnings);
@@ -163,13 +102,6 @@ class Json {
     }
 
     this.addOrganizedTrack(artistName, albumName, trackData);
-
-    console.log(Object.keys(this.tracksByArtistAndAlbum).length);
-
-    // const metadataJson = JSON.stringify(metadata);
-    // await writeFile(toPath, metadataJson);
-
-    // console.log(`Saved metadata to:   ${toPathRelative}...`);
   }
 
   private async scanDirectory(fromDir: string) {
@@ -203,38 +135,32 @@ class Json {
   printWarnings() {
     const entries = Object.entries(this.warnings);
 
-    if (entries.length > 0) {
-      console.warn("Problems found: ");
+    if (entries.length === 0) return;
 
-      entries.forEach(([path, warnings]) => {
-        console.log(`In ${path}:`);
-        warnings.forEach((warning) => {
-          console.log(`- ${warning}`);
-        });
+    console.warn("Problems found: ");
+
+    entries.forEach(([path, warnings]) => {
+      console.log(`In ${path}:`);
+      warnings.forEach((warning) => {
+        console.log(`- ${warning}`);
       });
-    }
+    });
+
+    process.exit(3);
   }
 
   async perform() {
     await this.organizeNormalTracks();
     this.printWarnings();
-    // console.log(Object.keys(this.tracksByArtistAndAlbum));
-    // console.log(this.tracksByArtistAndAlbum);
   }
 }
 
 async function main() {
   const args = new Args();
-  // const dir = new Dir(args);
   const json = new Json(args);
 
-  // await dir.perform();
   try {
     await json.perform();
-
-    console.log("write");
-    const tmp = JSON.stringify(json.tracksByArtistAndAlbum);
-    await writeFile(`${args.toDir}/tmp.json`, tmp);
   } catch (error) {
     console.error(error);
     process.exit(4);
