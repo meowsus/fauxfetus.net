@@ -1,46 +1,48 @@
 import { existsSync } from "fs";
-import { readdir, readFile, stat } from "fs/promises";
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
 import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { join } from "path";
+import slugify from "slugify";
+
+const DATA_DIRECTORY = "./public/data";
 
 const USAGE = `
 Usage: 
 
-  pnpm run scripts:generate-json FROM_DIR TO_DIR
+  pnpm run scripts:generate-json FROM_DIR
 
 Arguments:
 
   FROM_DIR - the parent directory of MP3 catalog
-  TO_DIR   - the directory to mimic in JSON files
 `;
 
 class Args {
   fromDir: string;
 
-  toDir: string;
-
   constructor() {
     const fromDir = process.argv[2];
-    const toDir = process.argv[3];
 
-    if (!fromDir || !toDir) {
+    if (!fromDir) {
       console.error(USAGE);
       process.exit(1);
     }
 
     this.fromDir = fromDir;
-    this.toDir = toDir;
   }
 }
+
+type ProcessingWarning = { [path: string]: string[] };
+
+type OrganizedTracks = {
+  [artistName: string]: { [albumName: string]: App.TrackMetadata[] };
+};
 
 class Json {
   args: Args;
 
-  warnings: { [path: string]: string[] };
+  warnings: ProcessingWarning;
 
-  tracksByArtistAndAlbum: {
-    [artistName: string]: { [albumName: string]: App.Track[] };
-  };
+  organizedTracks: OrganizedTracks;
 
   constructor(args: Args) {
     if (!existsSync(args.fromDir)) {
@@ -50,7 +52,7 @@ class Json {
 
     this.args = args;
     this.warnings = {};
-    this.tracksByArtistAndAlbum = {};
+    this.organizedTracks = {};
   }
 
   private addWarning(
@@ -69,17 +71,17 @@ class Json {
   private addOrganizedTrack(
     artistName: string | undefined,
     albumName: string | undefined,
-    trackData: App.Track,
+    trackData: App.TrackMetadata,
   ) {
     if (!artistName || !albumName) return;
 
-    if (!this.tracksByArtistAndAlbum[artistName])
-      this.tracksByArtistAndAlbum[artistName] = {};
+    if (!this.organizedTracks[artistName])
+      this.organizedTracks[artistName] = {};
 
-    if (!this.tracksByArtistAndAlbum[artistName][albumName])
-      this.tracksByArtistAndAlbum[artistName][albumName] = [];
+    if (!this.organizedTracks[artistName][albumName])
+      this.organizedTracks[artistName][albumName] = [];
 
-    this.tracksByArtistAndAlbum[artistName][albumName].push(trackData);
+    this.organizedTracks[artistName][albumName].push(trackData);
   }
 
   private async processMp3File(fromPath: string) {
@@ -126,7 +128,7 @@ class Json {
 
   async organizeNormalTracks() {
     console.log(
-      `Scanning ${this.args.fromDir} and generating JSON in ${this.args.toDir}...`,
+      `Scanning ${this.args.fromDir} and generating JSON in ${DATA_DIRECTORY}...`,
     );
 
     await this.scanDirectory(this.args.fromDir);
@@ -149,9 +151,39 @@ class Json {
     process.exit(3);
   }
 
+  async prepareDataDirectory() {
+    await rm(DATA_DIRECTORY, { recursive: true, force: true });
+    await mkdir(DATA_DIRECTORY, { recursive: true });
+  }
+
+  async writeArtistsJson() {
+    const artistNames = Object.keys(this.organizedTracks);
+
+    const sortedArtistNames = artistNames.sort((a, b) => {
+      const nameA = a.toLowerCase().replace(/^the\s+/i, "");
+      const nameB = b.toLowerCase().replace(/^the\s+/i, "");
+
+      return nameA.localeCompare(nameB);
+    });
+
+    const data: App.Artist[] = sortedArtistNames.map((name) => {
+      const slug = slugify(name, { strict: true, lower: true });
+      const url = `/artists/${slug}`;
+
+      return { name, url };
+    });
+
+    const path = `${DATA_DIRECTORY}/artists.json`;
+    const json = JSON.stringify(data);
+
+    await writeFile(path, json);
+  }
+
   async perform() {
     await this.organizeNormalTracks();
     this.printWarnings();
+    await this.prepareDataDirectory();
+    await this.writeArtistsJson();
   }
 }
 

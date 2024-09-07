@@ -2,19 +2,23 @@ import { IAudioMetadata } from "music-metadata";
 
 declare global {
   namespace App {
-    type Track = IAudioMetadata;
+    type TrackMetadata = IAudioMetadata;
 
     type AlbumName = IAudioMetadata["common"]["album"];
     type ArtistName = IAudioMetadata["common"]["artist"];
 
-    interface Album {
-      tracks: Track[];
-      name: AlbumName;
+    interface Artist {
+      name: ArtistName;
+      url: string;
     }
 
-    interface Artist {
-      albums: Album[];
-      name: ArtistName;
+    type ArtistJson = Artist[];
+
+    interface Album {
+      name: AlbumName;
+      url: string;
+      artistName: ArtistName;
+      artistUrl: string;
     }
   }
 }
