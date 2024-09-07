@@ -1,34 +1,7 @@
 import { existsSync } from "fs";
-import { mkdir, readdir, readFile, rm, stat } from "fs/promises";
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
 import { IAudioMetadata, parseBuffer } from "music-metadata";
 import { join } from "path";
-
-/**
- * pnpm run scripts:generate-json FROM_DIR TO_DIR
- *
- * Recursively scans the FROM_DIR and creates an identical folder structure
- * in the TO_DIR. The pathname of each MP3 file found in the FROM_DIR will be
- * used to create an identical JSON file in the directory in the TO_DIR containing
- * the metadata for the track.
- *
- * It will then collate all track json files into an album json file in the parent directory.
- * It will then collate all album json files into an artist json file in the parent directory.
- *
- * This process is destructive and will clear the TO_DIR before generation.
- *
- * FROM_DIR:
- * | some_band/
- * |-- some_album/
- * |---- some_track.mp3
- *
- * TO_DIR:
- * | catalog.json
- * | some_band.json
- * | some_band/
- * |-- some_album.json
- * |-- some_album/
- * |---- some_track.json
- */
 
 const USAGE = `
 Usage: 
@@ -122,7 +95,7 @@ class Json {
 
   warnings: { [path: string]: string[] };
 
-  organizedTracks: {
+  tracksByArtistAndAlbum: {
     [artistName: string]: { [albumName: string]: App.Track[] };
   };
 
@@ -133,7 +106,7 @@ class Json {
     }
 
     this.args = args;
-    this.organizedTracks = {};
+    this.tracksByArtistAndAlbum = {};
     this.warnings = {};
   }
 
@@ -157,47 +130,46 @@ class Json {
   ) {
     if (!artistName || !albumName) return;
 
-    if (!this.organizedTracks[artistName])
-      this.organizedTracks[artistName] = {};
+    if (!this.tracksByArtistAndAlbum[artistName])
+      this.tracksByArtistAndAlbum[artistName] = {};
 
-    if (!this.organizedTracks[artistName][albumName])
-      this.organizedTracks[artistName][albumName] = [];
+    if (!this.tracksByArtistAndAlbum[artistName][albumName])
+      this.tracksByArtistAndAlbum[artistName][albumName] = [];
 
-    this.organizedTracks[artistName][albumName].push(trackData);
+    this.tracksByArtistAndAlbum[artistName][albumName].push(trackData);
   }
 
   private async processMp3File(fromPath: string) {
     const buffer = await readFile(fromPath);
 
-    try {
-      // console.log(`Try processing from: ${fromPath}...`);
+    // console.log(`Try processing from: ${fromPath}...`);
 
-      const trackData = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
+    const trackData = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
 
-      const artistName = trackData.common.artist;
-      const albumName = trackData.common.album;
+    const artistName = trackData.common.artist;
+    const albumName = trackData.common.album;
 
-      if (trackData.quality.warnings.length > 0) {
-        this.addWarning(fromPath, trackData.quality.warnings);
-      }
+    console.log(artistName);
 
-      if (!artistName || !albumName) {
-        this.addWarning(
-          fromPath,
-          `Artist or album name missing - (Artist: ${artistName}) (Album: ${albumName})`,
-        );
-      }
-
-      this.addOrganizedTrack(artistName, albumName, trackData);
-
-      // const metadataJson = JSON.stringify(metadata);
-      // await writeFile(toPath, metadataJson);
-
-      // console.log(`Saved metadata to:   ${toPathRelative}...`);
-    } catch (error) {
-      console.error(error);
-      process.exit(3);
+    if (trackData.quality.warnings.length > 0) {
+      this.addWarning(fromPath, trackData.quality.warnings);
     }
+
+    if (!artistName || !albumName) {
+      this.addWarning(
+        fromPath,
+        `Artist or album name missing - (Artist: ${artistName}) (Album: ${albumName})`,
+      );
+    }
+
+    this.addOrganizedTrack(artistName, albumName, trackData);
+
+    console.log(Object.keys(this.tracksByArtistAndAlbum).length);
+
+    // const metadataJson = JSON.stringify(metadata);
+    // await writeFile(toPath, metadataJson);
+
+    // console.log(`Saved metadata to:   ${toPathRelative}...`);
   }
 
   private async scanDirectory(fromDir: string) {
@@ -212,7 +184,7 @@ class Json {
 
       if ((await stat(fromPath)).isDirectory()) {
         // Recursively process directories
-        this.scanDirectory(fromPath);
+        await this.scanDirectory(fromPath);
       } else if (item.endsWith(".mp3")) {
         // Process MP3 files
         await this.processMp3File(fromPath);
@@ -246,16 +218,27 @@ class Json {
   async perform() {
     await this.organizeNormalTracks();
     this.printWarnings();
-    console.log(Object.entries(this.organizedTracks).length);
-    // console.log(this.organizedTracks);
+    // console.log(Object.keys(this.tracksByArtistAndAlbum));
+    // console.log(this.tracksByArtistAndAlbum);
   }
 }
 
-(async () => {
+async function main() {
   const args = new Args();
-  const dir = new Dir(args);
+  // const dir = new Dir(args);
   const json = new Json(args);
 
-  await dir.perform();
-  await json.perform();
-})();
+  // await dir.perform();
+  try {
+    await json.perform();
+
+    console.log("write");
+    const tmp = JSON.stringify(json.tracksByArtistAndAlbum);
+    await writeFile(`${args.toDir}/tmp.json`, tmp);
+  } catch (error) {
+    console.error(error);
+    process.exit(4);
+  }
+}
+
+main();
