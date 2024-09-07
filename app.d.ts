@@ -12,8 +12,6 @@ declare global {
       url: string;
     }
 
-    type ArtistJson = Artist[];
-
     interface Album {
       name: AlbumName;
       url: string;
