@@ -1,13 +1,17 @@
+"use client";
+
+import { useFetchArtists } from "@/hooks/api";
 import Link from "next/link";
-import ArtistsData from "../../public/data/artists.json";
 
 export default function ArtistsPage() {
-  const artists: App.Artist[] = ArtistsData;
+  const { data } = useFetchArtists();
+
+  if (!data) throw Error("No data");
 
   return (
     <>
       <h1>Artists</h1>
-      {artists.map((artist) => (
+      {data.map((artist) => (
         <Link href={artist.url} key={artist.url}>
           {artist.name}
         </Link>
