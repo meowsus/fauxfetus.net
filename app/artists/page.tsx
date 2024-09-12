@@ -11,11 +11,13 @@ export default function ArtistsPage() {
   return (
     <>
       <h1>Artists</h1>
-      {data.map((artist) => (
-        <Link href={artist.url} key={artist.url}>
-          {artist.name}
-        </Link>
-      ))}
+      <ul>
+        {data.map((artist) => (
+          <li key={artist.path}>
+            <Link href={artist.path}>{artist.name}</Link>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

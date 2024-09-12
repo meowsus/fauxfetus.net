@@ -9,14 +9,18 @@ declare global {
 
     interface Artist {
       name: ArtistName;
-      url: string;
+      path: string;
     }
 
     interface Album {
       name: AlbumName;
-      url: string;
-      artistName: ArtistName;
-      artistUrl: string;
+      path: string;
     }
+
+    type ArtistsJson = Artist[];
+
+    type ArtistJson = Artist & {
+      albums: Album[];
+    };
   }
 }
