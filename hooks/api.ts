@@ -7,7 +7,27 @@ export const useFetchArtists = () =>
     fallbackData: [],
   });
 
-export const useFetchArtist = (artist: string) =>
-  useSWR<App.ArtistJson>(`/data/artists/${artist}.json`, fetcher, {
+export const useFetchArtist = ({ artistSlug }: { artistSlug: string }) =>
+  useSWR<App.ArtistJson>(`/data/artists/${artistSlug}.json`, fetcher, {
     fallbackData: { name: "", path: "", albums: [] },
   });
+
+export const useFetchAlbum = ({
+  artistSlug,
+  albumSlug,
+}: {
+  artistSlug: string;
+  albumSlug: string;
+}) =>
+  useSWR<App.AlbumJson>(
+    `/data/artists/${artistSlug}/${albumSlug}.json`,
+    fetcher,
+    {
+      fallbackData: {
+        name: "",
+        path: "",
+        tracks: [],
+        artist: { name: "", path: "" },
+      },
+    },
+  );

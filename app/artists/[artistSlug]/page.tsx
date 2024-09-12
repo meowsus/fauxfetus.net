@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function ArtistPage({ params }: Props) {
-  const { data } = useFetchArtist(params.artistSlug);
+  const { data } = useFetchArtist(params);
 
   if (!data) throw Error("No data");
 

@@ -169,55 +169,90 @@ class Json {
       return { name, path };
     });
 
-    // Write the data
-    const path = `${DATA_DIRECTORY}/artists.json`;
     const json = JSON.stringify(data);
 
-    await writeFile(path, json);
-
-    // Prep the next directory
-    await mkdir(`${DATA_DIRECTORY}/artists`, { recursive: true });
+    // Write the data
+    const path = `${DATA_DIRECTORY}/artists`;
+    await writeFile(`${path}.json`, json);
+    await mkdir(path, { recursive: true });
   }
 
   async writeArtistJson() {
     // For each artist name, take albums...
-    Object.entries(this.organizedTracks).forEach(
-      async ([artistName, albums]) => {
-        // Sort albums alphabetically
-        const sortedAlbums = Object.entries(albums).sort((a, b) => {
-          const [nameA] = a;
-          const [nameB] = b;
+    for (const [artistName, albums] of Object.entries(this.organizedTracks)) {
+      // Sort albums alphabetically
+      const sortedAlbums = Object.entries(albums).sort((a, b) => {
+        const [nameA] = a;
+        const [nameB] = b;
 
-          return nameA.localeCompare(nameB);
+        return nameA.localeCompare(nameB);
+      });
+
+      // Build the data
+      const artistSlug = slugify(artistName, { strict: true, lower: true });
+
+      const data: App.ArtistJson = {
+        name: artistName,
+        path: `/artists/${artistSlug}`,
+
+        albums: sortedAlbums.map(([albumName]) => {
+          const albumSlug = slugify(albumName, { strict: true, lower: true });
+          const albumPath = `/artists/${artistSlug}/${albumSlug}`;
+
+          return { name: albumName, path: albumPath };
+        }),
+      };
+
+      const json = JSON.stringify(data);
+
+      // Write the data & prep next directory
+      const path = `${DATA_DIRECTORY}/artists/${artistSlug}`;
+      await writeFile(`${path}.json`, json);
+      await mkdir(path, { recursive: true });
+    }
+  }
+
+  async writeAlbumJson() {
+    // For each artist name, take albums...
+    for (const [artistName, albums] of Object.entries(this.organizedTracks)) {
+      for (const [albumName, tracks] of Object.entries(albums)) {
+        // Sort tracks by track number
+        const sortedTracks = tracks.sort((a, b) => {
+          const { no: trackNumberA } = a.common.track;
+          const { no: trackNumberB } = b.common.track;
+
+          return (trackNumberA || 0) - (trackNumberB || 0);
         });
 
         // Build the data
         const artistSlug = slugify(artistName, { strict: true, lower: true });
+        const artistPath = `/artists/${artistSlug}`;
 
-        const data: App.ArtistJson = {
-          name: artistName,
-          path: `/artists/${artistSlug}`,
+        const albumSlug = slugify(albumName, { strict: true, lower: true });
+        const albumPath = `/artists/${artistSlug}/${albumSlug}`;
 
-          albums: sortedAlbums.map(([albumName]) => {
-            const albumSlug = slugify(albumName, { strict: true, lower: true });
-            const albumPath = `/artists/${artistSlug}/${albumSlug}`;
+        const data: App.AlbumJson = {
+          name: albumName,
+          path: albumPath,
+          artist: { name: artistName, path: artistPath },
 
-            return { name: albumName, path: albumPath };
+          tracks: sortedTracks.map((track) => {
+            const name = track.common.title ?? "";
+            const slug = slugify(name, { strict: true, lower: true });
+            const path = `${albumPath}/${slug}`;
+
+            return { name, path };
           }),
         };
 
-        // Write the data
-        const path = `${DATA_DIRECTORY}/artists/${artistSlug}.json`;
         const json = JSON.stringify(data);
 
-        await writeFile(path, json);
-
-        // Prep the next directory
-        await mkdir(`${DATA_DIRECTORY}/artists/${artistSlug}`, {
-          recursive: true,
-        });
-      },
-    );
+        // Write the data & prep next directory
+        const path = `${DATA_DIRECTORY}/artists/${artistSlug}/${albumSlug}`;
+        await writeFile(`${path}.json`, json);
+        await mkdir(path, { recursive: true });
+      }
+    }
   }
 
   async perform() {
@@ -225,6 +260,7 @@ class Json {
     await this.prepareDataDirectory();
     await this.writeArtistsJson();
     await this.writeArtistJson();
+    await this.writeAlbumJson();
   }
 }
 
