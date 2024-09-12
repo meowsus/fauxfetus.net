@@ -16,8 +16,18 @@ Arguments:
   FROM_DIR - the parent directory of MP3 catalog
 `;
 
-class Args {
+type ProcessingWarning = { [path: string]: string[] };
+
+type OrganizedTracks = {
+  [artistName: string]: { [albumName: string]: App.TrackMetadata[] };
+};
+
+class Json {
   fromDir: string;
+
+  warnings: ProcessingWarning;
+
+  organizedTracks: OrganizedTracks;
 
   constructor() {
     const fromDir = process.argv[2];
@@ -27,30 +37,12 @@ class Args {
       process.exit(1);
     }
 
-    this.fromDir = fromDir;
-  }
-}
-
-type ProcessingWarning = { [path: string]: string[] };
-
-type OrganizedTracks = {
-  [artistName: string]: { [albumName: string]: App.TrackMetadata[] };
-};
-
-class Json {
-  args: Args;
-
-  warnings: ProcessingWarning;
-
-  organizedTracks: OrganizedTracks;
-
-  constructor(args: Args) {
-    if (!existsSync(args.fromDir)) {
+    if (!existsSync(fromDir)) {
       console.error("FROM_DIR does not exist");
       process.exit(2);
     }
 
-    this.args = args;
+    this.fromDir = fromDir;
     this.warnings = {};
     this.organizedTracks = {};
   }
@@ -128,10 +120,11 @@ class Json {
 
   async organizeNormalTracks() {
     console.log(
-      `Scanning ${this.args.fromDir} and generating JSON in ${DATA_DIRECTORY}...`,
+      `Scanning ${this.fromDir} and generating JSON in ${DATA_DIRECTORY}...`,
     );
 
-    await this.scanDirectory(this.args.fromDir);
+    await this.scanDirectory(this.fromDir);
+    this.printWarnings();
   }
 
   printWarnings() {
@@ -229,7 +222,6 @@ class Json {
 
   async perform() {
     await this.organizeNormalTracks();
-    this.printWarnings();
     await this.prepareDataDirectory();
     await this.writeArtistsJson();
     await this.writeArtistJson();
@@ -237,8 +229,7 @@ class Json {
 }
 
 async function main() {
-  const args = new Args();
-  const json = new Json(args);
+  const json = new Json();
 
   try {
     await json.perform();
