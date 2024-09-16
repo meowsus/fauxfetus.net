@@ -34,5 +34,11 @@ declare global {
       tracks: Track[];
       artist: Artist;
     };
+
+    type TrackJson = Track & {
+      metadata: TrackMetadata;
+      album: Album;
+      artist: Artist;
+    };
   }
 }

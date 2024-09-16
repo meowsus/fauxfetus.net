@@ -255,12 +255,49 @@ class Json {
     }
   }
 
+  async writeTrackJson() {
+    // For each artist name, take albums...
+    for (const [artistName, albums] of Object.entries(this.organizedTracks)) {
+      for (const [albumName, tracks] of Object.entries(albums)) {
+        // Build the data
+        const artistSlug = slugify(artistName, { strict: true, lower: true });
+        const artistPath = `/artists/${artistSlug}`;
+
+        const albumSlug = slugify(albumName, { strict: true, lower: true });
+        const albumPath = `/artists/${artistSlug}/${albumSlug}`;
+
+        for (const metadata of tracks) {
+          const trackSlug = slugify(metadata.common.title ?? "", {
+            strict: true,
+            lower: true,
+          });
+
+          const path = `/artists/${artistSlug}/${albumSlug}/${trackSlug}`;
+
+          const data: App.TrackJson = {
+            name: metadata.common.title,
+            album: { name: albumName, path: albumPath },
+            artist: { name: artistName, path: artistPath },
+            path,
+            metadata,
+          };
+
+          const json = JSON.stringify(data);
+
+          // Write the data
+          await writeFile(`${DATA_DIRECTORY}${path}.json`, json);
+        }
+      }
+    }
+  }
+
   async perform() {
     await this.organizeNormalTracks();
     await this.prepareDataDirectory();
     await this.writeArtistsJson();
     await this.writeArtistJson();
     await this.writeAlbumJson();
+    await this.writeTrackJson();
   }
 }
 
