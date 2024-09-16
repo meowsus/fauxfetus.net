@@ -1,7 +1,7 @@
 "use client";
 
 import { useFetchAlbum } from "@/hooks/api";
-import Link from "next/link";
+import { Link } from "@nextui-org/link";
 
 interface Props {
   params: { artistSlug: string; albumSlug: string };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useFetchArtists } from "@/hooks/api";
-import Link from "next/link";
+import { Link } from "@nextui-org/link";
 
 export default function ArtistsPage() {
   const { data } = useFetchArtists();
