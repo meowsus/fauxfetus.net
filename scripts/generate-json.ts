@@ -16,88 +16,129 @@ Arguments:
   FROM_DIR - the parent directory of MP3 catalog
 `;
 
-type ProcessingWarning = { [path: string]: string[] };
+type ProcessingError = { [path: string]: string[] };
 
 type OrganizedTracks = {
   [artistName: string]: { [albumName: string]: App.TrackMetadata[] };
 };
 
+/**
+ * Responsible for processing, validating, and creating a ton of JSON files
+ * in the public directory
+ */
 class Json {
+  /**
+   * The directory from which to process MP3 files
+   */
   fromDir: string;
 
-  warnings: ProcessingWarning;
+  /**
+   * An object of path keys and string arrays
+   */
+  errors: ProcessingError;
 
-  organizedTracks: OrganizedTracks;
+  /**
+   * An object of track metadata organized by artist name and album name
+   */
+  tracks: OrganizedTracks;
 
+  /**
+   * Setup
+   */
   constructor() {
     const fromDir = process.argv[2];
 
+    // Ensure directory was supplied
     if (!fromDir) {
       console.error(USAGE);
       process.exit(1);
     }
 
+    // Ensure directory exists
     if (!existsSync(fromDir)) {
       console.error("FROM_DIR does not exist");
       process.exit(2);
     }
 
     this.fromDir = fromDir;
-    this.warnings = {};
-    this.organizedTracks = {};
+    this.errors = {};
+    this.tracks = {};
   }
 
-  private addWarning(
+  /**
+   * Utility to add validation errors
+   */
+  private addError(
     path: string,
     warning: string | IAudioMetadata["quality"]["warnings"],
   ) {
-    if (!this.warnings[path]) this.warnings[path] = [];
+    // Create space for an error found at `path`
+    if (!this.errors[path]) this.errors[path] = [];
 
+    // Handles various styles of errors
     if (typeof warning === "string") {
-      this.warnings[path].push(warning);
+      this.errors[path].push(warning);
     } else {
-      warning.forEach((warning) => this.warnings[path].push(warning.message));
+      warning.forEach((warning) => this.errors[path].push(warning.message));
     }
   }
 
-  private addOrganizedTrack(
-    artistName: string | undefined,
-    albumName: string | undefined,
-    trackData: App.TrackMetadata,
+  /**
+   * Utility to push a track into the organized track object.
+   */
+  private addTrack(
+    artistName: string,
+    albumName: string,
+    metadata: App.TrackMetadata,
   ) {
-    if (!artistName || !albumName) return;
+    // Make space for the artist
+    if (!this.tracks[artistName]) this.tracks[artistName] = {};
 
-    if (!this.organizedTracks[artistName])
-      this.organizedTracks[artistName] = {};
+    // Make space for the album
+    if (!this.tracks[artistName][albumName])
+      this.tracks[artistName][albumName] = [];
 
-    if (!this.organizedTracks[artistName][albumName])
-      this.organizedTracks[artistName][albumName] = [];
-
-    this.organizedTracks[artistName][albumName].push(trackData);
+    // Add the metadata to the artist's album
+    this.tracks[artistName][albumName].push(metadata);
   }
 
-  private async processMp3File(fromPath: string) {
-    const buffer = await readFile(fromPath);
-
-    const trackData = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
-
-    const artistName = trackData.common.artist;
-    const albumName = trackData.common.album;
-
-    if (trackData.quality.warnings.length > 0) {
-      this.addWarning(fromPath, trackData.quality.warnings);
-    }
-
-    if (!artistName || !albumName) {
-      this.addWarning(
-        fromPath,
-        `Artist or album name missing - (Artist: ${artistName}) (Album: ${albumName})`,
-      );
-    }
-
-    this.addOrganizedTrack(artistName, albumName, trackData);
+  /**
+   * Utility for consistent slugs
+   */
+  private slugify(name: string) {
+    return slugify(name, { strict: true, lower: true });
   }
 
+  /**
+   * Responsible for parsing metadata from a file buffer, validating
+   * missing artist or album names, before adding them to the tracks object
+   */
+  private async processMp3File(path: string) {
+    // Parse metadata from buffer
+    const buffer = await readFile(path);
+    const metadata = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
+
+    // Fetch relevant metadata
+    const { artist, album } = metadata.common;
+
+    // Process quality warnings as errors
+    if (metadata.quality.warnings.length > 0) {
+      this.addError(path, metadata.quality.warnings);
+    }
+
+    // Validate presence of artist and album name before adding to tracks
+    if (!artist || !album) {
+      const error = `Artist or album name missing - (Artist: ${artist}) (Album: ${album})`;
+      this.addError(path, error);
+    } else {
+      this.addTrack(artist, album, metadata);
+    }
+  }
+
+  /**
+   * Responsible for recursively scanning a given directory
+   * TODO: move shouldSkip logic out of here so that COMPS and SPLITS can be processed
+   */
   private async scanDirectory(fromDir: string) {
     const items = await readdir(fromDir);
 
@@ -118,17 +159,12 @@ class Json {
     }
   }
 
-  async organizeNormalTracks() {
-    console.log(
-      `Scanning ${this.fromDir} and generating JSON in ${DATA_DIRECTORY}...`,
-    );
-
-    await this.scanDirectory(this.fromDir);
-    this.printWarnings();
-  }
-
-  printWarnings() {
-    const entries = Object.entries(this.warnings);
+  /**
+   * Prints validation warnings and exists
+   * TODO: Expand to iterate over tracks for more specific validation
+   */
+  private validateTracks() {
+    const entries = Object.entries(this.errors);
 
     if (entries.length === 0) return;
 
@@ -144,14 +180,32 @@ class Json {
     process.exit(3);
   }
 
+  /**
+   * Main track processor
+   * TODO: processing normal tracks and split tracks are different operations?
+   */
+  async processTracks() {
+    console.log(
+      `Scanning ${this.fromDir} and generating JSON in ${DATA_DIRECTORY}...`,
+    );
+
+    await this.scanDirectory(this.fromDir);
+  }
+
+  /**
+   * Blows out the DATA_DIRECTORY and recreates it
+   */
   async prepareDataDirectory() {
     await rm(DATA_DIRECTORY, { recursive: true, force: true });
     await mkdir(DATA_DIRECTORY, { recursive: true });
   }
 
+  /**
+   * Writes the artist index json
+   */
   async writeArtistsJson() {
     // Get all artist names
-    const artistNames = Object.keys(this.organizedTracks);
+    const artistNames = Object.keys(this.tracks);
 
     // Sort artist names alphabetically, ignoring "The"s
     const sortedArtistNames = artistNames.sort((a, b) => {
@@ -163,7 +217,7 @@ class Json {
 
     // Build the data
     const data: App.ArtistsJson = sortedArtistNames.map((name) => {
-      const slug = slugify(name, { strict: true, lower: true });
+      const slug = this.slugify(name);
       const path = `/artists/${slug}`;
 
       return { name, path };
@@ -177,9 +231,12 @@ class Json {
     await mkdir(path, { recursive: true });
   }
 
+  /**
+   * Writes an artist's data
+   */
   async writeArtistJson() {
     // For each artist name, take albums...
-    for (const [artistName, albums] of Object.entries(this.organizedTracks)) {
+    for (const [artistName, albums] of Object.entries(this.tracks)) {
       // Sort albums alphabetically
       const sortedAlbums = Object.entries(albums).sort((a, b) => {
         const [nameA] = a;
@@ -189,14 +246,14 @@ class Json {
       });
 
       // Build the data
-      const artistSlug = slugify(artistName, { strict: true, lower: true });
+      const artistSlug = this.slugify(artistName);
 
       const data: App.ArtistJson = {
         name: artistName,
         path: `/artists/${artistSlug}`,
 
         albums: sortedAlbums.map(([albumName]) => {
-          const albumSlug = slugify(albumName, { strict: true, lower: true });
+          const albumSlug = this.slugify(albumName);
           const albumPath = `/artists/${artistSlug}/${albumSlug}`;
 
           return { name: albumName, path: albumPath };
@@ -212,9 +269,12 @@ class Json {
     }
   }
 
+  /**
+   * Writes an artist's album data
+   */
   async writeAlbumJson() {
     // For each artist name, take albums...
-    for (const [artistName, albums] of Object.entries(this.organizedTracks)) {
+    for (const [artistName, albums] of Object.entries(this.tracks)) {
       for (const [albumName, tracks] of Object.entries(albums)) {
         // Sort tracks by track number
         const sortedTracks = tracks.sort((a, b) => {
@@ -225,10 +285,10 @@ class Json {
         });
 
         // Build the data
-        const artistSlug = slugify(artistName, { strict: true, lower: true });
+        const artistSlug = this.slugify(artistName);
         const artistPath = `/artists/${artistSlug}`;
 
-        const albumSlug = slugify(albumName, { strict: true, lower: true });
+        const albumSlug = this.slugify(albumName);
         const albumPath = `/artists/${artistSlug}/${albumSlug}`;
 
         const data: App.AlbumJson = {
@@ -238,7 +298,7 @@ class Json {
 
           tracks: sortedTracks.map((track) => {
             const name = track.common.title ?? "";
-            const slug = slugify(name, { strict: true, lower: true });
+            const slug = this.slugify(name);
             const path = `${albumPath}/${slug}`;
 
             return { name, path };
@@ -255,22 +315,22 @@ class Json {
     }
   }
 
+  /**
+   * Write's an artist's album's track data
+   */
   async writeTrackJson() {
     // For each artist name, take albums...
-    for (const [artistName, albums] of Object.entries(this.organizedTracks)) {
+    for (const [artistName, albums] of Object.entries(this.tracks)) {
       for (const [albumName, tracks] of Object.entries(albums)) {
         // Build the data
-        const artistSlug = slugify(artistName, { strict: true, lower: true });
+        const artistSlug = this.slugify(artistName);
         const artistPath = `/artists/${artistSlug}`;
 
-        const albumSlug = slugify(albumName, { strict: true, lower: true });
+        const albumSlug = this.slugify(albumName);
         const albumPath = `/artists/${artistSlug}/${albumSlug}`;
 
         for (const metadata of tracks) {
-          const trackSlug = slugify(metadata.common.title ?? "", {
-            strict: true,
-            lower: true,
-          });
+          const trackSlug = this.slugify(metadata.common.title ?? "");
 
           const path = `/artists/${artistSlug}/${albumSlug}/${trackSlug}`;
 
@@ -292,7 +352,8 @@ class Json {
   }
 
   async perform() {
-    await this.organizeNormalTracks();
+    await this.processTracks();
+    this.validateTracks();
     await this.prepareDataDirectory();
     await this.writeArtistsJson();
     await this.writeArtistJson();
