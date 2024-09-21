@@ -2,6 +2,7 @@ import { existsSync } from "fs";
 import { mkdir, rm, writeFile } from "fs/promises";
 import slugify from "slugify";
 import Parser from "./classes/Parser";
+import Track from "./classes/Track";
 
 const DATA_DIRECTORY = "./public/data";
 
@@ -306,7 +307,10 @@ async function main() {
 
   try {
     await parser.run();
-    console.log(parser.metadata);
+
+    Track.wrap(parser.metadata).map((track) => {
+      console.log(track.name);
+    });
   } catch (error) {
     console.error(error);
     process.exit(2);
