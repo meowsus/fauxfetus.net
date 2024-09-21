@@ -1,8 +1,7 @@
 import { existsSync } from "fs";
-import { mkdir, readdir, readFile, rm, stat, writeFile } from "fs/promises";
-import { IAudioMetadata, parseBuffer } from "music-metadata";
-import { join } from "path";
+import { mkdir, rm, writeFile } from "fs/promises";
 import slugify from "slugify";
+import Parser from "./classes/Parser";
 
 const DATA_DIRECTORY = "./public/data";
 
@@ -66,24 +65,6 @@ class Json {
   }
 
   /**
-   * Utility to add validation errors
-   */
-  private addError(
-    path: string,
-    warning: string | IAudioMetadata["quality"]["warnings"],
-  ) {
-    // Create space for an error found at `path`
-    if (!this.errors[path]) this.errors[path] = [];
-
-    // Handles various styles of errors
-    if (typeof warning === "string") {
-      this.errors[path].push(warning);
-    } else {
-      warning.forEach((warning) => this.errors[path].push(warning.message));
-    }
-  }
-
-  /**
    * Utility to push a track into the organized track object.
    */
   private addTrack(
@@ -107,56 +88,6 @@ class Json {
    */
   private slugify(name: string) {
     return slugify(name, { strict: true, lower: true });
-  }
-
-  /**
-   * Responsible for parsing metadata from a file buffer, validating
-   * missing artist or album names, before adding them to the tracks object
-   */
-  private async processMp3File(path: string) {
-    // Parse metadata from buffer
-    const buffer = await readFile(path);
-    const metadata = await parseBuffer(buffer, { mimeType: "audio/mpeg" });
-
-    // Fetch relevant metadata
-    const { artist, album } = metadata.common;
-
-    // Process quality warnings as errors
-    if (metadata.quality.warnings.length > 0) {
-      this.addError(path, metadata.quality.warnings);
-    }
-
-    // Validate presence of artist and album name before adding to tracks
-    if (!artist || !album) {
-      const error = `Artist or album name missing - (Artist: ${artist}) (Album: ${album})`;
-      this.addError(path, error);
-    } else {
-      this.addTrack(artist, album, metadata);
-    }
-  }
-
-  /**
-   * Responsible for recursively scanning a given directory
-   * TODO: move shouldSkip logic out of here so that COMPS and SPLITS can be processed
-   */
-  private async scanDirectory(fromDir: string) {
-    const items = await readdir(fromDir);
-
-    for (const item of items) {
-      const fromPath = join(fromDir, item);
-
-      const shouldSkip = !!fromPath.match(/_(COMPS|RETIRED|SPLITS)/);
-
-      if (shouldSkip) continue;
-
-      if ((await stat(fromPath)).isDirectory()) {
-        // Recursively process directories
-        await this.scanDirectory(fromPath);
-      } else if (item.endsWith(".mp3")) {
-        // Process MP3 files
-        await this.processMp3File(fromPath);
-      }
-    }
   }
 
   /**
@@ -363,13 +294,22 @@ class Json {
 }
 
 async function main() {
-  const json = new Json();
+  const fromDir = process.argv[2];
+
+  // Ensure directory was supplied
+  if (!fromDir) {
+    console.error(USAGE);
+    process.exit(1);
+  }
+
+  const parser = new Parser(fromDir);
 
   try {
-    await json.perform();
+    await parser.run();
+    console.log(parser.metadata);
   } catch (error) {
     console.error(error);
-    process.exit(4);
+    process.exit(2);
   }
 }
 
