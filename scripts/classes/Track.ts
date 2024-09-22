@@ -1,5 +1,6 @@
 import { IAudioMetadata } from "music-metadata";
 import Helpers from "./Helpers";
+import Member from "./Member";
 
 export default class Track {
   /**
@@ -45,7 +46,7 @@ export default class Track {
   /**
    * An array of member names
    */
-  members: string[];
+  members: Member[];
 
   /**
    * Extracts relevant data from supplied metadata
@@ -53,15 +54,15 @@ export default class Track {
   constructor(metadata: IAudioMetadata) {
     this.metadata = metadata;
 
-    this.members = this.metadata.common.composer ?? [];
+    this.members = Member.wrap(metadata.common.composer ?? []);
 
-    this.artistName = this.metadata.common.artist ?? "";
+    this.artistName = metadata.common.artist ?? "";
     this.artistSlug = Helpers.slugify(this.artistName);
 
-    this.albumName = this.metadata.common.album ?? "";
+    this.albumName = metadata.common.album ?? "";
     this.albumSlug = Helpers.slugify(this.albumName);
 
-    this.name = this.metadata.common.title ?? "";
+    this.name = metadata.common.title ?? "";
     this.slug = Helpers.slugify(this.name);
 
     this.path = `/artists/${this.artistSlug}/${this.albumSlug}/${this.slug}`;
