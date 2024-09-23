@@ -1,8 +1,8 @@
 import { existsSync } from "fs";
 import { mkdir, rm, writeFile } from "fs/promises";
 import slugify from "slugify";
+import Catalog from "./classes/Catalog";
 import Parser from "./classes/Parser";
-import Track from "./classes/Track";
 
 const DATA_DIRECTORY = "./public/data";
 
@@ -303,14 +303,11 @@ async function main() {
     process.exit(1);
   }
 
-  const parser = new Parser(fromDir);
-
   try {
+    const parser = new Parser(fromDir);
     await parser.run();
-
-    Track.wrap(parser.metadata).map((track) => {
-      console.log(track.name);
-    });
+    const catalog = new Catalog(parser.metadata);
+    console.log(catalog.artists[11].members.length);
   } catch (error) {
     console.error(error);
     process.exit(2);

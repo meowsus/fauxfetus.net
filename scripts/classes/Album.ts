@@ -53,14 +53,14 @@ export default class Album {
   }
 
   private buildMembers(tracks: Track[]) {
-    const memberSet = new Set<Member>();
-
-    for (const track of tracks) {
-      for (const member of track.members) {
-        memberSet.add(member);
-      }
-    }
-
-    return Array.from(memberSet);
+    return Array.from(
+      tracks
+        .flatMap((track) => track.members)
+        .reduce((map, member) => {
+          if (!map.has(member.name)) map.set(member.name, member);
+          return map;
+        }, new Map<string, Member>())
+        .values(),
+    );
   }
 }
