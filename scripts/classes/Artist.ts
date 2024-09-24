@@ -9,11 +9,6 @@ export default class Artist {
   name: string;
 
   /**
-   * The artist's slug
-   */
-  slug: string;
-
-  /**
    * The artist's path
    */
   path: string;
@@ -29,14 +24,12 @@ export default class Artist {
   albums: Album[];
 
   constructor(albums: Album[], name: string) {
+    this.name = name;
     this.albums = albums;
 
+    this.path = `/artists/${Helpers.slugify(name)}`;
+
     this.members = this.buildMembers(albums);
-
-    this.name = name;
-    this.slug = Helpers.slugify(name);
-
-    this.path = `/artists/${this.slug}`;
   }
 
   static wrap(albumsByArtistName: Record<string, Album[]>) {

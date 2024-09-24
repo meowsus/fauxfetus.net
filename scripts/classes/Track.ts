@@ -14,11 +14,6 @@ export default class Track {
   name: string;
 
   /**
-   * The track's slug
-   */
-  slug: string;
-
-  /**
    * The track's router path
    */
   path: string;
@@ -34,11 +29,6 @@ export default class Track {
   artistName: string;
 
   /**
-   * The artist's slug
-   */
-  artistSlug: string;
-
-  /**
    * The artist's path
    */
   artistPath: string;
@@ -47,11 +37,6 @@ export default class Track {
    * The album name
    */
   albumName: string;
-
-  /**
-   * The album slug
-   */
-  albumSlug: string;
 
   /**
    * The album path
@@ -70,20 +55,15 @@ export default class Track {
     this.filePath = filePath;
     this.metadata = metadata;
 
-    this.members = Member.wrap(metadata.common.composer ?? []);
-
     this.artistName = metadata.common.artist ?? "";
-    this.artistSlug = Helpers.slugify(this.artistName);
-    this.artistPath = `/artists/${this.artistSlug}`;
-
     this.albumName = metadata.common.album ?? "";
-    this.albumSlug = Helpers.slugify(this.albumName);
-    this.albumPath = `${this.artistPath}/${this.albumSlug}`;
-
     this.name = metadata.common.title ?? "";
-    this.slug = Helpers.slugify(this.name);
 
-    this.path = `${this.albumPath}/${this.slug}`;
+    this.artistPath = `/artists/${Helpers.slugify(this.artistName)}`;
+    this.albumPath = `${this.artistPath}/${Helpers.slugify(this.albumName)}`;
+    this.path = `${this.albumPath}/${Helpers.slugify(this.name)}`;
+
+    this.members = Member.wrap(metadata.common.composer ?? []);
   }
 
   /**

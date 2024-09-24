@@ -7,11 +7,6 @@ export default class Member {
   name: string;
 
   /**
-   * The member's slug
-   */
-  slug: string;
-
-  /**
    * The member's path
    */
   path: string;
@@ -19,8 +14,7 @@ export default class Member {
   constructor(name: string) {
     this.name = name;
 
-    this.slug = Helpers.slugify(this.name);
-    this.path = `/members/${this.slug}`;
+    this.path = `/members/${Helpers.slugify(this.name)}`;
   }
 
   static wrap(members: string[]) {

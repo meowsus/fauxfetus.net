@@ -14,11 +14,6 @@ export default class Album {
   name: string;
 
   /**
-   * The album's slug
-   */
-  slug: string;
-
-  /**
    * The album's path
    */
   path: string;
@@ -27,11 +22,6 @@ export default class Album {
    * The artist's name
    */
   artistName: string;
-
-  /**
-   * The artist's slug
-   */
-  artistSlug: string;
 
   /**
    * Artist Path
@@ -44,18 +34,14 @@ export default class Album {
   members: Member[];
 
   constructor(tracks: Track[], name: string, artistName: string) {
+    this.name = name;
     this.tracks = tracks;
+    this.artistName = artistName;
+
+    this.artistPath = `/artists/${Helpers.slugify(artistName)}`;
+    this.path = `${this.artistPath}/${Helpers.slugify(name)}`;
 
     this.members = this.buildMembers(tracks);
-
-    this.name = name;
-    this.slug = Helpers.slugify(name);
-
-    this.artistName = artistName;
-    this.artistSlug = Helpers.slugify(artistName);
-    this.artistPath = `/artists/${this.artistSlug}`;
-
-    this.path = `${this.artistPath}/${this.slug}`;
   }
 
   static wrap(tracksByAlbumName: Record<string, Track[]>, artistName: string) {
