@@ -63,4 +63,10 @@ export default class Album {
         .values(),
     );
   }
+
+  static wrap(tracksByAlbumName: Record<string, Track[]>, artistName: string) {
+    return Object.entries(tracksByAlbumName).map(
+      ([albumName, tracks]) => new Album(tracks, albumName, artistName),
+    );
+  }
 }

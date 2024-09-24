@@ -2,6 +2,7 @@ import { existsSync } from "fs";
 import { mkdir, rm, writeFile } from "fs/promises";
 import slugify from "slugify";
 import Catalog from "./classes/Catalog";
+import Helpers from "./classes/Helpers";
 import Parser from "./classes/Parser";
 
 const DATA_DIRECTORY = "./public/data";
@@ -304,11 +305,15 @@ async function main() {
   }
 
   try {
+    await rm(DATA_DIRECTORY, { recursive: true, force: true });
+    await mkdir(DATA_DIRECTORY, { recursive: true });
+
     const parser = new Parser(fromDir);
+
     await parser.run();
+
     const catalog = new Catalog(parser.metadataByPath);
-    console.log(catalog.artists[11].albums[0].tracks[0].filePath);
-    console.log(JSON.stringify(catalog.artists[11]));
+    Helpers.writeJson(`${DATA_DIRECTORY}/artists/index.json`, catalog.artists);
   } catch (error) {
     console.error(error);
     process.exit(2);

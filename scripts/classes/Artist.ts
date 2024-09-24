@@ -51,4 +51,10 @@ export default class Artist {
         .values(),
     );
   }
+
+  static wrap(albumsByArtistName: Record<string, Album[]>) {
+    return Object.entries(albumsByArtistName).map(
+      ([artistName, albums]) => new Artist(albums, artistName),
+    );
+  }
 }
