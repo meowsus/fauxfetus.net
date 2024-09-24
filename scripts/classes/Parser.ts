@@ -10,11 +10,6 @@ export default class Parser {
   fromDir: string;
 
   /**
-   * An object of path keys and string arrays
-   */
-  errors: { [path: string]: string[] };
-
-  /**
    * An array of all metadata parsed from `fromDir`
    */
   metadataByPath: Record<string, IAudioMetadata>;
@@ -28,7 +23,6 @@ export default class Parser {
 
     this.fromDir = fromDir;
 
-    this.errors = {};
     this.metadataByPath = {};
   }
 

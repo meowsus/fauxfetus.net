@@ -34,6 +34,11 @@ export default class Album {
   artistSlug: string;
 
   /**
+   * Artist Path
+   */
+  artistPath: string;
+
+  /**
    * The album's members
    */
   members: Member[];
@@ -48,8 +53,15 @@ export default class Album {
 
     this.artistName = artistName;
     this.artistSlug = Helpers.slugify(artistName);
+    this.artistPath = `/artists/${this.artistSlug}`;
 
-    this.path = `/artists/${this.artistSlug}/${this.slug}`;
+    this.path = `${this.artistPath}/${this.slug}`;
+  }
+
+  static wrap(tracksByAlbumName: Record<string, Track[]>, artistName: string) {
+    return Object.entries(tracksByAlbumName).map(
+      ([albumName, tracks]) => new Album(tracks, albumName, artistName),
+    );
   }
 
   private buildMembers(tracks: Track[]) {
@@ -61,12 +73,6 @@ export default class Album {
           return map;
         }, new Map<string, Member>())
         .values(),
-    );
-  }
-
-  static wrap(tracksByAlbumName: Record<string, Track[]>, artistName: string) {
-    return Object.entries(tracksByAlbumName).map(
-      ([albumName, tracks]) => new Album(tracks, albumName, artistName),
     );
   }
 }

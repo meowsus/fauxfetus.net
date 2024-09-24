@@ -39,6 +39,11 @@ export default class Track {
   artistSlug: string;
 
   /**
+   * The artist's path
+   */
+  artistPath: string;
+
+  /**
    * The album name
    */
   albumName: string;
@@ -47,6 +52,11 @@ export default class Track {
    * The album slug
    */
   albumSlug: string;
+
+  /**
+   * The album path
+   */
+  albumPath: string;
 
   /**
    * An array of member names
@@ -64,14 +74,16 @@ export default class Track {
 
     this.artistName = metadata.common.artist ?? "";
     this.artistSlug = Helpers.slugify(this.artistName);
+    this.artistPath = `/artists/${this.artistSlug}`;
 
     this.albumName = metadata.common.album ?? "";
     this.albumSlug = Helpers.slugify(this.albumName);
+    this.albumPath = `${this.artistPath}/${this.albumSlug}`;
 
     this.name = metadata.common.title ?? "";
     this.slug = Helpers.slugify(this.name);
 
-    this.path = `/artists/${this.artistSlug}/${this.albumSlug}/${this.slug}`;
+    this.path = `${this.albumPath}/${this.slug}`;
   }
 
   /**

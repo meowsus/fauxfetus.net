@@ -39,6 +39,12 @@ export default class Artist {
     this.path = `/artists/${this.slug}`;
   }
 
+  static wrap(albumsByArtistName: Record<string, Album[]>) {
+    return Object.entries(albumsByArtistName).map(
+      ([artistName, albums]) => new Artist(albums, artistName),
+    );
+  }
+
   private buildMembers(albums: Album[]) {
     return Array.from(
       albums
@@ -49,12 +55,6 @@ export default class Artist {
           return map;
         }, new Map<string, Member>())
         .values(),
-    );
-  }
-
-  static wrap(albumsByArtistName: Record<string, Album[]>) {
-    return Object.entries(albumsByArtistName).map(
-      ([artistName, albums]) => new Artist(albums, artistName),
     );
   }
 }

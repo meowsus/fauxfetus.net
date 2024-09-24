@@ -1,44 +1,22 @@
-import { IAudioMetadata, ICommonTagsResult } from "music-metadata";
+import Album from "./scripts/classes/Album";
+import Artist from "./scripts/classes/Artist";
+import Track from "./scripts/classes/Track";
 
 declare global {
   namespace App {
-    type TrackMetadata = IAudioMetadata;
+    type ArtistsPageData = Pick<typeof Artist, "name" | "path">[];
 
-    type AlbumName = ICommonTagsResult["album"];
-    type ArtistName = ICommonTagsResult["artist"];
-    type TrackName = ICommonTagsResult["title"];
-    type TrackNumber = ICommonTagsResult["track"]["no"];
-
-    interface Artist {
-      name: ArtistName;
-      path: string;
-    }
-
-    interface Album {
-      name: AlbumName;
-      path: string;
-    }
-
-    interface Track {
-      name: TrackName;
-      path: string;
-    }
-
-    type ArtistsJson = Artist[];
-
-    type ArtistJson = Artist & {
-      albums: Album[];
+    type ArtistPageData = Pick<typeof Artist, "name" | "path" | "members"> & {
+      albums: Pick<typeof Album, "name" | "path">[];
     };
 
-    type AlbumJson = Album & {
-      tracks: Track[];
-      artist: Artist;
+    type AlbumPageData = Pick<
+      typeof Album,
+      "name" | "path" | "artistName" | "artistPath" | "members"
+    > & {
+      tracks: Pick<typeof Track, "name" | "path" | "filePath">[];
     };
 
-    type TrackJson = Track & {
-      metadata: TrackMetadata;
-      album: Album;
-      artist: Artist;
-    };
+    type TrackPageData = typeof Track;
   }
 }
