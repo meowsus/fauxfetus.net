@@ -306,8 +306,8 @@ async function main() {
   try {
     const parser = new Parser(fromDir);
     await parser.run();
-    const catalog = new Catalog(parser.metadata);
-    console.log(catalog.artists[11].members.length);
+    const catalog = new Catalog(parser.metadataByPath);
+    console.log(catalog.artists[11].albums[0].tracks[0].filePath);
   } catch (error) {
     console.error(error);
     process.exit(2);

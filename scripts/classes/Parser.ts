@@ -17,7 +17,7 @@ export default class Parser {
   /**
    * An array of all metadata parsed from `fromDir`
    */
-  metadata: IAudioMetadata[];
+  metadataByPath: Record<string, IAudioMetadata>;
 
   constructor(fromDir: string) {
     // Ensure directory exists
@@ -29,7 +29,7 @@ export default class Parser {
     this.fromDir = fromDir;
 
     this.errors = {};
-    this.metadata = [];
+    this.metadataByPath = {};
   }
 
   /**
@@ -55,7 +55,8 @@ export default class Parser {
     if (!artist || !album) {
       throw new ProcessingError(`${path}: no artist or album name`);
     } else {
-      this.metadata.push(metadata);
+      const key = path.replace(this.fromDir, "");
+      this.metadataByPath[key] = metadata;
     }
   }
 

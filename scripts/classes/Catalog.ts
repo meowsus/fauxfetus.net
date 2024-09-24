@@ -32,8 +32,8 @@ export default class Catalog {
    */
   artists: Artist[];
 
-  constructor(metadata: IAudioMetadata[]) {
-    this.tracks = Track.wrap(metadata);
+  constructor(metadataByPath: Record<string, IAudioMetadata>) {
+    this.tracks = Track.wrap(metadataByPath);
     this.organizedTracks = this.organizeTracks(this.tracks);
     this.organizedAlbums = this.organizeAlbums(this.organizedTracks);
     this.artists = this.buildArtists(this.organizedAlbums);

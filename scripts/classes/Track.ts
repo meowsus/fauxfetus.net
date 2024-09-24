@@ -24,6 +24,11 @@ export default class Track {
   path: string;
 
   /**
+   * The path to the MP3 file
+   */
+  filePath: string;
+
+  /**
    * The artist's name
    */
   artistName: string;
@@ -51,7 +56,8 @@ export default class Track {
   /**
    * Extracts relevant data from supplied metadata
    */
-  constructor(metadata: IAudioMetadata) {
+  constructor(filePath: string, metadata: IAudioMetadata) {
+    this.filePath = filePath;
     this.metadata = metadata;
 
     this.members = Member.wrap(metadata.common.composer ?? []);
@@ -71,7 +77,9 @@ export default class Track {
   /**
    * Receives an array of metadata and produces an array of Track instances
    */
-  static wrap(data: IAudioMetadata[]) {
-    return data.map((metadata) => new Track(metadata));
+  static wrap(metadataByPath: Record<string, IAudioMetadata>) {
+    return Object.entries(metadataByPath).map(
+      ([path, metadata]) => new Track(path, metadata),
+    );
   }
 }
