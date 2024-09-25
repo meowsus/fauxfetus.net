@@ -6,6 +6,7 @@ I should have started this a long time ago.
 
 ## TODO
 
+- Fix Catalog: Try instantiating empty Artist & Albums with `.add` method
 - figure out how to handle splits and comps
   - Directory class?
   - Inheritance from Album > Split/Compilation or Album > Compilation > Split

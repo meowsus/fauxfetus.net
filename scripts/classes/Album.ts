@@ -44,12 +44,6 @@ export default class Album {
     this.members = this.buildMembers(tracks);
   }
 
-  static wrap(tracksByAlbumName: Record<string, Track[]>, artistName: string) {
-    return Object.entries(tracksByAlbumName).map(
-      ([albumName, tracks]) => new Album(tracks, albumName, artistName),
-    );
-  }
-
   private buildMembers(tracks: Track[]) {
     return Array.from(
       tracks

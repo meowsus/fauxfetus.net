@@ -69,8 +69,8 @@ export default class Track {
   /**
    * Receives an array of metadata and produces an array of Track instances
    */
-  static wrap(metadataByPath: Record<string, IAudioMetadata>) {
-    return Object.entries(metadataByPath).map(
+  static wrap(metadataByFilePath: Record<string, IAudioMetadata>) {
+    return Object.entries(metadataByFilePath).map(
       ([path, metadata]) => new Track(path, metadata),
     );
   }

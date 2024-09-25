@@ -12,7 +12,7 @@ export default class Parser {
   /**
    * An array of all metadata parsed from `fromDir`
    */
-  metadataByPath: Record<string, IAudioMetadata>;
+  metadataByFilePath: Record<string, IAudioMetadata>;
 
   constructor(fromDir: string) {
     // Ensure directory exists
@@ -23,7 +23,7 @@ export default class Parser {
 
     this.fromDir = fromDir;
 
-    this.metadataByPath = {};
+    this.metadataByFilePath = {};
   }
 
   /**
@@ -50,7 +50,7 @@ export default class Parser {
       throw new ProcessingError(`${path}: no artist or album name`);
     } else {
       const key = path.replace(this.fromDir, "");
-      this.metadataByPath[key] = metadata;
+      this.metadataByFilePath[key] = metadata;
     }
   }
 
@@ -64,9 +64,7 @@ export default class Parser {
     for (const item of items) {
       const path = join(startPath, item);
 
-      const shouldSkip = !!path.match(/_(COMPS|RETIRED|SPLITS)/);
-
-      if (shouldSkip) continue;
+      if (!!path.match(/_RETIRED/)) continue;
 
       if ((await stat(path)).isDirectory()) {
         // Recursively process directories

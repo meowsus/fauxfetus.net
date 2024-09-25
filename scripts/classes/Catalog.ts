@@ -17,8 +17,8 @@ export default class Catalog {
    */
   artists: Artist[];
 
-  constructor(metadataByPath: Record<string, IAudioMetadata>) {
-    this.artists = this.buildArtists(metadataByPath);
+  constructor(metadataByFilePath: Record<string, IAudioMetadata>) {
+    this.artists = this.buildArtists(metadataByFilePath);
   }
 
   private sortAlbums(albums: Album[]) {
@@ -64,19 +64,21 @@ export default class Catalog {
     );
   }
 
-  private buildArtists(metadataByPath: Record<string, IAudioMetadata>) {
-    const tracks = Track.wrap(metadataByPath);
-    const sortedTracks = this.sortTracks(tracks);
+  private buildArtists(metadataByFilePath: Record<string, IAudioMetadata>) {
+    const tracks = Track.wrap(metadataByFilePath);
+    ``;
+    // // TODO: This sorting should happen after organization, ya ding dong
+    // const sortedTracks = this.sortTracks(tracks);
 
-    const tracksByAlbumAndArtistName =
-      this.organizeTracksByAlbumAndArtistName(sortedTracks);
+    // const tracksByAlbumAndArtistName =
+    //   this.organizeTracksByAlbumAndArtistName(sortedTracks);
 
-    const albumsByArtistName = this.organizeAlbumsByArtistName(
-      tracksByAlbumAndArtistName,
-    );
+    // const albumsByArtistName = this.organizeAlbumsByArtistName(
+    //   tracksByAlbumAndArtistName,
+    // );
 
-    const artists = Artist.wrap(albumsByArtistName);
+    // const artists = Artist.wrap(albumsByArtistName);
 
-    return this.sortArtists(artists);
+    // return this.sortArtists(artists);
   }
 }

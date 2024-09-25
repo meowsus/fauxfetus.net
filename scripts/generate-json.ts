@@ -31,7 +31,7 @@ Arguments:
 
     await parser.run();
 
-    const catalog = new Catalog(parser.metadataByPath);
+    const catalog = new Catalog(parser.metadataByFilePath);
     const json = new Json(catalog.artists);
 
     json.writeArtistsPageData();
