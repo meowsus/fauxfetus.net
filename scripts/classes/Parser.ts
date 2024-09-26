@@ -64,7 +64,7 @@ export default class Parser {
     for (const item of items) {
       const path = join(startPath, item);
 
-      if (!!path.match(/_RETIRED/)) continue;
+      if (!!path.match(/_(RETIRED|SPLITS|COMPS)/)) continue;
 
       if ((await stat(path)).isDirectory()) {
         // Recursively process directories

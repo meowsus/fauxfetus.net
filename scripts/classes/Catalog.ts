@@ -3,12 +3,8 @@ import Album from "./Album";
 import Artist from "./Artist";
 import Track from "./Track";
 
-type OrganizedTracks = {
+type TracksByAlbumAndArtistName = {
   [artistName: string]: { [albumName: string]: Track[] };
-};
-
-type OrganizedAlbums = {
-  [artistName: string]: Album[];
 };
 
 export default class Catalog {
@@ -21,64 +17,34 @@ export default class Catalog {
     this.artists = this.buildArtists(metadataByFilePath);
   }
 
-  private sortAlbums(albums: Album[]) {
-    return albums.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  private sortArtists(artists: Artist[]) {
-    return artists.sort((a, b) => {
-      const nameA = a.name.toLowerCase().replace(/^the\s+/i, "");
-      const nameB = b.name.toLowerCase().replace(/^the\s+/i, "");
-
-      return nameA.localeCompare(nameB);
-    });
-  }
-
-  private sortTracks(tracks: Track[]) {
-    return tracks.sort((a, b) => {
-      const { no: trackNumberA } = a.metadata.common.track;
-      const { no: trackNumberB } = b.metadata.common.track;
-
-      return (trackNumberA || 0) - (trackNumberB || 0);
-    });
-  }
-
-  private organizeTracksByAlbumAndArtistName(tracks: Track[]) {
+  private organizeTracks(tracks: Track[]) {
     return tracks.reduce((prev, track) => {
       const { artistName, albumName } = track;
       if (!prev[artistName]) prev[artistName] = {};
       if (!prev[artistName][albumName]) prev[artistName][albumName] = [];
       prev[artistName][albumName].push(track);
       return prev;
-    }, {} as OrganizedTracks);
-  }
-
-  private organizeAlbumsByArtistName(organizedTracks: OrganizedTracks) {
-    return Object.entries(organizedTracks).reduce(
-      (prev, [artistName, tracksByAlbumName]) => {
-        const albums = Album.wrap(tracksByAlbumName, artistName);
-        prev[artistName] = this.sortAlbums(albums);
-        return prev;
-      },
-      {} as OrganizedAlbums,
-    );
+    }, {} as TracksByAlbumAndArtistName);
   }
 
   private buildArtists(metadataByFilePath: Record<string, IAudioMetadata>) {
     const tracks = Track.wrap(metadataByFilePath);
-    ``;
-    // // TODO: This sorting should happen after organization, ya ding dong
-    // const sortedTracks = this.sortTracks(tracks);
+    const organizedTracks = this.organizeTracks(tracks);
 
-    // const tracksByAlbumAndArtistName =
-    //   this.organizeTracksByAlbumAndArtistName(sortedTracks);
+    return Object.entries(organizedTracks).map(([artistName, albumData]) => {
+      const artist = new Artist(artistName);
 
-    // const albumsByArtistName = this.organizeAlbumsByArtistName(
-    //   tracksByAlbumAndArtistName,
-    // );
+      for (const [albumName, tracks] of Object.entries(albumData)) {
+        const album = new Album(albumName, artistName);
 
-    // const artists = Artist.wrap(albumsByArtistName);
+        for (const track of tracks) {
+          album.addTrack(track);
+        }
 
-    // return this.sortArtists(artists);
+        artist.addAlbum(album);
+      }
+
+      return artist;
+    });
   }
 }

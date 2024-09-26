@@ -49,6 +49,11 @@ export default class Track {
   members: Member[];
 
   /**
+   * Track number
+   */
+  trackNumber: number;
+
+  /**
    * Extracts relevant data from supplied metadata
    */
   constructor(filePath: string, metadata: IAudioMetadata) {
@@ -58,6 +63,7 @@ export default class Track {
     this.artistName = metadata.common.artist ?? "";
     this.albumName = metadata.common.album ?? "";
     this.name = metadata.common.title ?? "";
+    this.trackNumber = metadata.common.track.no || 0;
 
     this.artistPath = `/artists/${Helpers.slugify(this.artistName)}`;
     this.albumPath = `${this.artistPath}/${Helpers.slugify(this.albumName)}`;

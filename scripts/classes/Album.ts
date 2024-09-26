@@ -4,9 +4,9 @@ import Track from "./Track";
 
 export default class Album {
   /**
-   * The album's tracks
+   * A map of the album's tracks, keyed by file path
    */
-  tracks: Track[];
+  trackMap: Map<string, Track>;
 
   /**
    * The album's name
@@ -29,30 +29,42 @@ export default class Album {
   artistPath: string;
 
   /**
-   * The album's members
+   * A map of the album's members, keyed by member name
    */
-  members: Member[];
+  memberMap: Map<string, Member>;
 
-  constructor(tracks: Track[], name: string, artistName: string) {
+  constructor(name: string, artistName: string) {
     this.name = name;
-    this.tracks = tracks;
     this.artistName = artistName;
 
     this.artistPath = `/artists/${Helpers.slugify(artistName)}`;
     this.path = `${this.artistPath}/${Helpers.slugify(name)}`;
 
-    this.members = this.buildMembers(tracks);
+    this.trackMap = new Map();
+    this.memberMap = new Map();
   }
 
-  private buildMembers(tracks: Track[]) {
-    return Array.from(
-      tracks
-        .flatMap((track) => track.members)
-        .reduce((map, member) => {
-          if (!map.has(member.name)) map.set(member.name, member);
-          return map;
-        }, new Map<string, Member>())
-        .values(),
-    );
+  addTrack(track: Track) {
+    if (this.trackMap.has(track.filePath)) return;
+
+    this.trackMap.set(track.filePath, track);
+    this.addMembers(track);
+  }
+
+  private addMembers(track: Track) {
+    track.members.forEach((member) => {
+      if (this.memberMap.has(member.name)) return;
+      this.memberMap.set(member.name, member);
+    });
+  }
+
+  get members() {
+    return Array.from(this.memberMap.values());
+  }
+
+  get tracks() {
+    return Array.from(this.trackMap.values()).sort((a, b) => {
+      return a.trackNumber - b.trackNumber;
+    });
   }
 }

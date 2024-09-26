@@ -14,12 +14,12 @@ export default class Artist {
   path: string;
 
   /**
-   * The artist's members
+   * An array of member names, keyed by member name
    */
   memberMap: Map<string, Member>;
 
   /**
-   * The artist's albums
+   * The artist's albums, keyed by album name
    */
   albumMap: Map<string, Album>;
 
@@ -36,14 +36,20 @@ export default class Artist {
     return Array.from(this.memberMap.values());
   }
 
-  add(album: Album) {
+  get albums() {
+    return Array.from(this.albumMap.values()).sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  }
+
+  addAlbum(album: Album) {
     if (this.albumMap.has(album.name)) return;
 
     this.albumMap.set(album.name, album);
     this.addMembers(album);
   }
 
-  addMembers(album: Album) {
+  private addMembers(album: Album) {
     album.tracks
       .flatMap((track) => track.members)
       .forEach((member) => {
