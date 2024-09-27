@@ -7,7 +7,6 @@ I should have started this a long time ago.
 ## TODO
 
 - figure out how to handle splits and comps
-  - Directory class?
   - Inheritance from Album > Split/Compilation or Album > Compilation > Split
 - add `Parser.warnings` for things like missing Composer field & print
 - figure out members data structure

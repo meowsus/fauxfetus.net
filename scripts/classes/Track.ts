@@ -71,13 +71,4 @@ export default class Track {
 
     this.members = Member.wrap(metadata.common.composer ?? []);
   }
-
-  /**
-   * Receives an array of metadata and produces an array of Track instances
-   */
-  static wrap(metadataByFilePath: Record<string, IAudioMetadata>) {
-    return Object.entries(metadataByFilePath).map(
-      ([path, metadata]) => new Track(path, metadata),
-    );
-  }
 }

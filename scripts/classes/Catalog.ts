@@ -4,7 +4,11 @@ import Artist from "./Artist";
 import Track from "./Track";
 
 type TracksByAlbumAndArtistName = {
-  [artistName: string]: { [albumName: string]: Track[] };
+  [artistName: string]: {
+    [albumName: string]: {
+      [filePath: string]: IAudioMetadata;
+    };
+  };
 };
 
 export default class Catalog {
@@ -17,27 +21,31 @@ export default class Catalog {
     this.artists = this.buildArtists(metadataByFilePath);
   }
 
-  private organizeTracks(tracks: Track[]) {
-    return tracks.reduce((prev, track) => {
-      const { artistName, albumName } = track;
-      if (!prev[artistName]) prev[artistName] = {};
-      if (!prev[artistName][albumName]) prev[artistName][albumName] = [];
-      prev[artistName][albumName].push(track);
-      return prev;
-    }, {} as TracksByAlbumAndArtistName);
+  private organizeMetadata(metadataByFilePath: Record<string, IAudioMetadata>) {
+    return Object.entries(metadataByFilePath).reduce(
+      (prev, [filePath, metadata]) => {
+        const { artist = "", album = "" } = metadata.common;
+        if (!prev[artist]) prev[artist] = {};
+        if (!prev[artist][album]) prev[artist][album] = {};
+        prev[artist][album][filePath] = metadata;
+        return prev;
+      },
+      {} as TracksByAlbumAndArtistName,
+    );
   }
 
   private buildArtists(metadataByFilePath: Record<string, IAudioMetadata>) {
-    const tracks = Track.wrap(metadataByFilePath);
-    const organizedTracks = this.organizeTracks(tracks);
+    const organizedMetadata = this.organizeMetadata(metadataByFilePath);
 
-    return Object.entries(organizedTracks).map(([artistName, albumData]) => {
+    return Object.entries(organizedMetadata).map(([artistName, albumData]) => {
       const artist = new Artist(artistName);
 
-      for (const [albumName, tracks] of Object.entries(albumData)) {
+      for (const [albumName, trackData] of Object.entries(albumData)) {
         const album = new Album(albumName, artistName);
 
-        for (const track of tracks) {
+        for (const [filePath, metadata] of Object.entries(trackData)) {
+          const track = new Track(filePath, metadata);
+
           album.addTrack(track);
         }
 
