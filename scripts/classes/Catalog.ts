@@ -21,19 +21,28 @@ export default class Catalog {
     this.artists = this.buildArtists(metadataByFilePath);
   }
 
+  /**
+   * Sorts metadata before reducing it to an iterable format
+   */
   private organizeMetadata(metadataByFilePath: Record<string, IAudioMetadata>) {
-    return Object.entries(metadataByFilePath).reduce(
-      (prev, [filePath, metadata]) => {
+    return Object.entries(metadataByFilePath)
+      .sort(([, metadataA], [, metadataB]) => {
+        const { artist: artistNameA = "" } = metadataA.common;
+        const { artist: artistNameB = "" } = metadataB.common;
+        return artistNameA.localeCompare(artistNameB);
+      })
+      .reduce((prev, [filePath, metadata]) => {
         const { artist = "", album = "" } = metadata.common;
         if (!prev[artist]) prev[artist] = {};
         if (!prev[artist][album]) prev[artist][album] = {};
         prev[artist][album][filePath] = metadata;
         return prev;
-      },
-      {} as TracksByAlbumAndArtistName,
-    );
+      }, {} as TracksByAlbumAndArtistName);
   }
 
+  /**
+   * Builds out Artist, Album, and Track associations
+   */
   private buildArtists(metadataByFilePath: Record<string, IAudioMetadata>) {
     const organizedMetadata = this.organizeMetadata(metadataByFilePath);
 

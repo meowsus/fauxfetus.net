@@ -6,11 +6,22 @@ I should have started this a long time ago.
 
 ## TODO
 
-- figure out how to handle splits and comps
-  - Inheritance from Album > Split/Compilation or Album > Compilation > Split
-- add `Parser.warnings` for things like missing Composer field & print
+### High Priority
+
+- Get tracks playing
+
+### Low Priority
+
 - figure out members data structure
 - Set up google group
+- add `Parser.warnings` for things like missing Composer field & print
+
+### 09/30/24:
+
+- figure out how to handle splits and comps
+- Inheritance from Album > Split/Compilation or Album > Compilation > Split
+
+I'm still kicking this can down the road. Right now an addition to a Split or Comp will just show up as an album. That's fine for now.
 
 ### 09/25/24:
 
