@@ -15,8 +15,8 @@ export default function AlbumPage({ params }: Props) {
   return (
     <>
       <h1>{data.name}</h1>
-      <Link href={data.album.path}>Back to {data.album.name}</Link>
-      <Link href={data.artist.path}>Back to {data.artist.name}</Link>
+      <Link href={data.albumPath}>Back to {data.albumName}</Link>
+      <Link href={data.artistPath}>Back to {data.artistName}</Link>
       <h2>Metadata</h2>
       <pre className="ml-6">{JSON.stringify(data.metadata)}</pre>
     </>

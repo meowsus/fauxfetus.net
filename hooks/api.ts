@@ -4,13 +4,13 @@ import useSWR from "swr";
 const fetcher = (url: string) => fetch(url).then((response) => response.json());
 
 export const useFetchArtists = () =>
-  useSWR<App.ArtistsJson>("/data/artists.json", fetcher, {
+  useSWR<App.ArtistsPageData>("/json/artists.json", fetcher, {
     fallbackData: [],
   });
 
 export const useFetchArtist = ({ artistSlug }: { artistSlug: string }) =>
-  useSWR<App.ArtistJson>(`/data/artists/${artistSlug}.json`, fetcher, {
-    fallbackData: { name: "", path: "", albums: [] },
+  useSWR<App.ArtistPageData>(`/json/artists/${artistSlug}.json`, fetcher, {
+    fallbackData: { name: "", path: "", members: [], albums: [] },
   });
 
 export const useFetchAlbum = ({
@@ -20,16 +20,18 @@ export const useFetchAlbum = ({
   artistSlug: string;
   albumSlug: string;
 }) =>
-  useSWR<App.AlbumJson>(
-    `/data/artists/${artistSlug}/${albumSlug}.json`,
+  useSWR<App.AlbumPageData>(
+    `/json/artists/${artistSlug}/${albumSlug}.json`,
     fetcher,
     {
       fallbackData: {
         name: "",
         path: "",
+        artistName: "",
+        artistPath: "",
+        members: [],
         tracks: [],
-        artist: { name: "", path: "" },
-      },
+      } as App.AlbumPageData,
     },
   );
 
@@ -42,16 +44,21 @@ export const useFetchTrack = ({
   albumSlug: string;
   trackSlug: string;
 }) =>
-  useSWR<App.TrackJson>(
-    `/data/artists/${artistSlug}/${albumSlug}/${trackSlug}.json`,
+  useSWR<App.TrackPageData>(
+    `/json/artists/${artistSlug}/${albumSlug}/${trackSlug}.json`,
     fetcher,
     {
       fallbackData: {
+        metadata: {} as IAudioMetadata,
         name: "",
         path: "",
-        metadata: {} as IAudioMetadata,
-        artist: { name: "", path: "" },
-        album: { name: "", path: "" },
+        filePath: "",
+        artistName: "",
+        artistPath: "",
+        albumName: "",
+        albumPath: "",
+        members: [],
+        trackNumber: 0,
       },
     },
   );

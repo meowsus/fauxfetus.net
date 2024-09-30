@@ -15,7 +15,7 @@ export default function AlbumPage({ params }: Props) {
   return (
     <>
       <h1>{data.name}</h1>
-      <Link href={data.artist.path}>Back to {data.artist.name}</Link>
+      <Link href={data.artistPath}>Back to {data.artistName}</Link>
       <h2>Tracks</h2>
       <ol className="ml-6">
         {data.tracks.map((track) => (

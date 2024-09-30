@@ -4,19 +4,19 @@ import Track from "./scripts/classes/Track";
 
 declare global {
   namespace App {
-    type ArtistsPageData = Pick<typeof Artist, "name" | "path">[];
+    type ArtistsPageData = Pick<Artist, "name" | "path">[];
 
-    type ArtistPageData = Pick<typeof Artist, "name" | "path" | "members"> & {
-      albums: Pick<typeof Album, "name" | "path">[];
+    type ArtistPageData = Pick<Artist, "name" | "path" | "members"> & {
+      albums: Pick<Album, "name" | "path">[];
     };
 
     type AlbumPageData = Pick<
-      typeof Album,
+      Album,
       "name" | "path" | "artistName" | "artistPath" | "members"
     > & {
-      tracks: Pick<typeof Track, "name" | "path" | "filePath">[];
+      tracks: Pick<Track, "name" | "path" | "filePath">[];
     };
 
-    type TrackPageData = typeof Track;
+    type TrackPageData = Track;
   }
 }
